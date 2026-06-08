@@ -15,6 +15,7 @@ export class MatchCenterComponent implements OnInit {
   employees: Employee[] = [];
   predictions: Prediction[] = [];
   filter: 'all' | 'scheduled' | 'completed' = 'all';
+  selectedGroup: string = 'all';
   
   selectedUserId: string = '';
   tempPredictions: { [matchId: string]: { scoreA: number, scoreB: number } } = {};
@@ -36,9 +37,20 @@ export class MatchCenterComponent implements OnInit {
     });
   }
 
+  get groups(): string[] {
+    const allGroups = this.matches.map(m => m.groupName).filter(Boolean);
+    return Array.from(new Set(allGroups)).sort();
+  }
+
   get filteredMatches() {
-    if (this.filter === 'all') return this.matches;
-    return this.matches.filter(m => m.status === this.filter);
+    let filtered = this.matches;
+    if (this.filter !== 'all') {
+      filtered = filtered.filter(m => m.status === this.filter);
+    }
+    if (this.selectedGroup !== 'all') {
+      filtered = filtered.filter(m => m.groupName === this.selectedGroup);
+    }
+    return filtered;
   }
 
   onUserChange() {

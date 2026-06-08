@@ -1,5 +1,17 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { initializeApp } from 'firebase/app';
+import { 
+  getFirestore, 
+  collection, 
+  doc, 
+  getDocs, 
+  setDoc, 
+  updateDoc, 
+  onSnapshot, 
+  writeBatch 
+} from 'firebase/firestore';
+import { firebaseConfig } from '../../environments/firebase-config';
 
 export interface Employee {
   id: string;
@@ -40,7 +52,8 @@ export interface PoolRules {
   providedIn: 'root'
 })
 export class PredictionService {
-  private readonly STORAGE_PREFIX = 'fonepay_wc_';
+  private app = initializeApp(firebaseConfig);
+  private db = getFirestore(this.app);
 
   private usersSubject = new BehaviorSubject<Employee[]>([]);
   private matchesSubject = new BehaviorSubject<Match[]>([]);
@@ -61,22 +74,38 @@ export class PredictionService {
   }
 
   private loadInitialData() {
-    const usersData = localStorage.getItem(`${this.STORAGE_PREFIX}users`);
-    const matchesData = localStorage.getItem(`${this.STORAGE_PREFIX}matches`);
-    const predictionsData = localStorage.getItem(`${this.STORAGE_PREFIX}predictions`);
-    const rulesData = localStorage.getItem(`${this.STORAGE_PREFIX}rules`);
+    onSnapshot(collection(this.db, 'users'), (snapshot) => {
+      const users: Employee[] = [];
+      snapshot.forEach((docSnap) => {
+        users.push(docSnap.data() as Employee);
+      });
+      if (users.length === 0) {
+        this.seedMockUsers();
+      } else {
+        this.usersSubject.next(users);
+      }
+    });
 
-    if (rulesData) {
-      this.rulesSubject.next(JSON.parse(rulesData));
-    }
+    onSnapshot(collection(this.db, 'matches'), (snapshot) => {
+      const matches: Match[] = [];
+      snapshot.forEach((docSnap) => {
+        matches.push(docSnap.data() as Match);
+      });
+      if (matches.length === 0) {
+        this.seedMockMatches();
+      } else {
+        matches.sort((a, b) => new Date(a.matchDate).getTime() - new Date(b.matchDate).getTime());
+        this.matchesSubject.next(matches);
+      }
+    });
 
-    if (!usersData || !matchesData) {
-      this.seedMockData();
-    } else {
-      this.usersSubject.next(JSON.parse(usersData));
-      this.matchesSubject.next(JSON.parse(matchesData));
-      this.predictionsSubject.next(predictionsData ? JSON.parse(predictionsData) : []);
-    }
+    onSnapshot(collection(this.db, 'predictions'), (snapshot) => {
+      const predictions: Prediction[] = [];
+      snapshot.forEach((docSnap) => {
+        predictions.push(docSnap.data() as Prediction);
+      });
+      this.predictionsSubject.next(predictions);
+    });
   }
 
   getFlag(countryName: string): string {
@@ -110,7 +139,7 @@ export class PredictionService {
     return `https://flagcdn.com/w80/${code}.png`;
   }
 
-  private seedMockData() {
+  private async seedMockUsers() {
     const mockUsers: Employee[] = [
       { id: 'u1', name: 'Hanok Tamang', totalPoints: 0, totalEarnings: 0 },
       { id: 'u2', name: 'Dipen Limbu', totalPoints: 0, totalEarnings: 0 },
@@ -124,7 +153,14 @@ export class PredictionService {
       { id: 'u10', name: 'Shambhav Acharya', totalPoints: 0, totalEarnings: 0 },
       { id: 'u11', name: 'Unish Shrestha', totalPoints: 0, totalEarnings: 0 },
     ];
+    const batch = writeBatch(this.db);
+    mockUsers.forEach(user => {
+      batch.set(doc(this.db, 'users', user.id), user);
+    });
+    await batch.commit();
+  }
 
+  private async seedMockMatches() {
     const mockMatches: Match[] = [
       { id: 'm1', teamA: 'Mexico', teamB: 'South Africa', flagA: this.getFlag('Mexico'), flagB: this.getFlag('South Africa'), matchDate: '2026-06-11T15:00:00Z', actualScoreA: null, actualScoreB: null, status: 'scheduled', groupName: 'Group A' },
       { id: 'm2', teamA: 'Korea Republic', teamB: 'Czechia', flagA: this.getFlag('Korea Republic'), flagB: this.getFlag('Czechia'), matchDate: '2026-06-11T18:00:00Z', actualScoreA: null, actualScoreB: null, status: 'scheduled', groupName: 'Group A' },
@@ -151,47 +187,36 @@ export class PredictionService {
       { id: 'm23', teamA: 'England', teamB: 'Croatia', flagA: this.getFlag('England'), flagB: this.getFlag('Croatia'), matchDate: '2026-06-17T21:00:00Z', actualScoreA: null, actualScoreB: null, status: 'scheduled', groupName: 'Group L' },
       { id: 'm24', teamA: 'Ghana', teamB: 'Panama', flagA: this.getFlag('Ghana'), flagB: this.getFlag('Panama'), matchDate: '2026-06-17T23:00:00Z', actualScoreA: null, actualScoreB: null, status: 'scheduled', groupName: 'Group L' }
     ];
-
-    this.saveData('users', mockUsers);
-    this.saveData('matches', mockMatches);
-    this.saveData('predictions', []);
-
-    this.usersSubject.next(mockUsers);
-    this.matchesSubject.next(mockMatches);
-    this.predictionsSubject.next([]);
+    const batch = writeBatch(this.db);
+    mockMatches.forEach(match => {
+      batch.set(doc(this.db, 'matches', match.id), match);
+    });
+    await batch.commit();
   }
 
-  private saveData(key: string, data: any) {
-    localStorage.setItem(`${this.STORAGE_PREFIX}${key}`, JSON.stringify(data));
-  }
-
-  // --- Users ---
   getUsers(): Employee[] {
     return this.usersSubject.getValue();
   }
 
-  addUser(name: string) {
-    const users = this.getUsers();
+  async addUser(name: string) {
+    const id = 'u' + Date.now();
     const newUser: Employee = {
-      id: 'u' + Date.now(),
+      id,
       name,
       totalPoints: 0,
       totalEarnings: 0
     };
-    users.push(newUser);
-    this.saveData('users', users);
-    this.usersSubject.next(users);
+    await setDoc(doc(this.db, 'users', id), newUser);
   }
 
-  // --- Matches ---
   getMatches(): Match[] {
     return this.matchesSubject.getValue();
   }
 
-  addMatch(teamA: string, teamB: string, matchDate: string, groupName: string) {
-    const matches = this.getMatches();
+  async addMatch(teamA: string, teamB: string, matchDate: string, groupName: string) {
+    const id = 'm' + Date.now();
     const newMatch: Match = {
-      id: 'm' + Date.now(),
+      id,
       teamA,
       teamB,
       flagA: this.getFlag(teamA),
@@ -202,42 +227,30 @@ export class PredictionService {
       status: 'scheduled',
       groupName
     };
-    const updated = [...matches, newMatch];
-    this.saveData('matches', updated);
-    this.matchesSubject.next(updated);
+    await setDoc(doc(this.db, 'matches', id), newMatch);
   }
 
-  // --- Predictions ---
   getPredictions(): Prediction[] {
     return this.predictionsSubject.getValue();
   }
 
-  savePrediction(userId: string, matchId: string, scoreA: number, scoreB: number) {
+  async savePrediction(userId: string, matchId: string, scoreA: number, scoreB: number) {
     const predictions = this.getPredictions();
-    const existingIndex = predictions.findIndex(p => p.userId === userId && p.matchId === matchId);
+    const existing = predictions.find(p => p.userId === userId && p.matchId === matchId);
+    const id = existing ? existing.id : 'p' + Date.now();
 
     const newPrediction: Prediction = {
-      id: existingIndex > -1 ? predictions[existingIndex].id : 'p' + Date.now(),
+      id,
       userId,
       matchId,
       predictedScoreA: scoreA,
       predictedScoreB: scoreB,
-      pointsEarned: 0
+      pointsEarned: existing ? existing.pointsEarned : 0
     };
-
-    if (existingIndex > -1) {
-      predictions[existingIndex] = newPrediction;
-    } else {
-      predictions.push(newPrediction);
-    }
-
-    this.saveData('predictions', predictions);
-    this.predictionsSubject.next(predictions);
+    await setDoc(doc(this.db, 'predictions', id), newPrediction);
   }
 
-  // --- Rules ---
   updateRules(rules: PoolRules) {
-    this.saveData('rules', rules);
     this.rulesSubject.next(rules);
     this.recalculateAllPoints();
   }
@@ -246,20 +259,15 @@ export class PredictionService {
     return this.rulesSubject.getValue();
   }
 
-  // --- Core Calculation Logic ---
-  resolveMatch(matchId: string, actualScoreA: number, actualScoreB: number) {
-    const matches = this.getMatches();
-    const matchIndex = matches.findIndex(m => m.id === matchId);
+  async resolveMatch(matchId: string, actualScoreA: number, actualScoreB: number) {
+    const matchRef = doc(this.db, 'matches', matchId);
+    await updateDoc(matchRef, {
+      actualScoreA,
+      actualScoreB,
+      status: 'completed'
+    });
 
-    if (matchIndex > -1) {
-      matches[matchIndex].actualScoreA = actualScoreA;
-      matches[matchIndex].actualScoreB = actualScoreB;
-      matches[matchIndex].status = 'completed';
-      this.saveData('matches', matches);
-      this.matchesSubject.next(matches);
-
-      this.recalculateAllPoints();
-    }
+    await this.recalculateAllPoints();
   }
 
   getRemainingPool(): number {
@@ -270,77 +278,50 @@ export class PredictionService {
     return Math.max(0, remaining);
   }
 
-  private calculatePointsForMatch(matchId: string) {
-    // This is handled by recalculateAllPoints to ensure correct distribution order,
-    // but we define it here as a helper for individual matches if needed.
-    const match = this.getMatches().find(m => m.id === matchId);
-    if (!match || match.status !== 'completed') return;
-
-    const predictions = this.getPredictions();
-    const matchPredictions = predictions.filter(p => p.matchId === matchId);
-
-    const totalEmployees = this.getUsers().length;
-    const matchPrize = 30 * totalEmployees;
-    const outcomePool = matchPrize / 2;
-    const exactPool = matchPrize / 2;
-
-    const actualDiff = match.actualScoreA! - match.actualScoreB!;
-    
-    // Outcome predictions: correct win or correct draw
-    const successfulOutcomePreds = matchPredictions.filter(pred => {
-      const predDiff = pred.predictedScoreA - pred.predictedScoreB;
-      return (actualDiff > 0 && predDiff > 0) || 
-             (actualDiff < 0 && predDiff < 0) || 
-             (actualDiff === 0 && predDiff === 0);
-    });
-
-    // Exact score predictions
-    const successfulExactPreds = matchPredictions.filter(pred => {
-      return pred.predictedScoreA === match.actualScoreA && 
-             pred.predictedScoreB === match.actualScoreB;
-    });
-
-    const N_outcome = successfulOutcomePreds.length;
-    const N_exact = successfulExactPreds.length;
-
-    const outcomeShare = N_outcome > 0 ? outcomePool / N_outcome : 0;
-    const exactShare = N_exact > 0 ? exactPool / N_exact : 0;
-
-    matchPredictions.forEach(pred => {
-      pred.pointsEarned = 0;
-    });
-
-    successfulOutcomePreds.forEach(pred => {
-      pred.pointsEarned += outcomeShare;
-    });
-
-    successfulExactPreds.forEach(pred => {
-      pred.pointsEarned += exactShare;
-    });
-
-    matchPredictions.forEach(pred => {
-      pred.pointsEarned = Number(pred.pointsEarned.toFixed(2));
-    });
-
-    this.saveData('predictions', predictions);
-    this.predictionsSubject.next(predictions);
-  }
-
-  private recalculateAllPoints() {
+  private async recalculateAllPoints() {
     const matches = this.getMatches().filter(m => m.status === 'completed');
-    
-    // Recalculate share for each completed match
-    matches.forEach(m => {
-      this.calculatePointsForMatch(m.id);
-    });
+    const predictions = [...this.getPredictions()];
+    const users = [...this.getUsers()];
 
-    // Aggregate back to users
-    this.aggregateUserScores();
-  }
+    predictions.forEach(p => p.pointsEarned = 0);
 
-  private aggregateUserScores() {
-    const users = this.getUsers();
-    const predictions = this.getPredictions();
+    for (const match of matches) {
+      const matchPredictions = predictions.filter(p => p.matchId === match.id);
+      const actualDiff = match.actualScoreA! - match.actualScoreB!;
+      
+      const successfulOutcomePreds = matchPredictions.filter(pred => {
+        const predDiff = pred.predictedScoreA - pred.predictedScoreB;
+        return (actualDiff > 0 && predDiff > 0) || 
+               (actualDiff < 0 && predDiff < 0) || 
+               (actualDiff === 0 && predDiff === 0);
+      });
+
+      const successfulExactPreds = matchPredictions.filter(pred => {
+        return pred.predictedScoreA === match.actualScoreA && 
+               pred.predictedScoreB === match.actualScoreB;
+      });
+
+      const N_outcome = successfulOutcomePreds.length;
+      const N_exact = successfulExactPreds.length;
+
+      const matchPrize = 30 * users.length;
+      const outcomePool = matchPrize / 2;
+      const exactPool = matchPrize / 2;
+
+      const outcomeShare = N_outcome > 0 ? outcomePool / N_outcome : 0;
+      const exactShare = N_exact > 0 ? exactPool / N_exact : 0;
+
+      matchPredictions.forEach(pred => {
+        let earned = 0;
+        if (successfulOutcomePreds.some(p => p.id === pred.id)) {
+          earned += outcomeShare;
+        }
+        if (successfulExactPreds.some(p => p.id === pred.id)) {
+          earned += exactShare;
+        }
+        pred.pointsEarned = Number(earned.toFixed(2));
+      });
+    }
 
     users.forEach(user => {
       const userPreds = predictions.filter(p => p.userId === user.id);
@@ -349,14 +330,33 @@ export class PredictionService {
       user.totalEarnings = Number(totalEarnings.toFixed(2));
     });
 
-    this.saveData('users', users);
-    this.usersSubject.next(users);
+    const batch = writeBatch(this.db);
+    
+    predictions.forEach(pred => {
+      batch.set(doc(this.db, 'predictions', pred.id), pred);
+    });
+    users.forEach(user => {
+      batch.set(doc(this.db, 'users', user.id), user);
+    });
+
+    await batch.commit();
   }
 
-  resetData() {
-    localStorage.removeItem(`${this.STORAGE_PREFIX}users`);
-    localStorage.removeItem(`${this.STORAGE_PREFIX}matches`);
-    localStorage.removeItem(`${this.STORAGE_PREFIX}predictions`);
-    this.seedMockData();
+  async resetData() {
+    const batch = writeBatch(this.db);
+
+    const predictionsSnap = await getDocs(collection(this.db, 'predictions'));
+    predictionsSnap.forEach(d => batch.delete(d.ref));
+
+    const matchesSnap = await getDocs(collection(this.db, 'matches'));
+    matchesSnap.forEach(d => batch.delete(d.ref));
+
+    const usersSnap = await getDocs(collection(this.db, 'users'));
+    usersSnap.forEach(d => batch.delete(d.ref));
+
+    await batch.commit();
+
+    await this.seedMockUsers();
+    await this.seedMockMatches();
   }
 }
