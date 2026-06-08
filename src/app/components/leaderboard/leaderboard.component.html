@@ -1,0 +1,62 @@
+<div class="header-section">
+  <h2>Leaderboard</h2>
+  <div class="rule-badge">NPR 30 per employee/match split (50% outcome, 50% exact score)</div>
+</div>
+
+<div class="gold-pot-container glass-card">
+  <div class="gold-pot-content">
+    <div class="treasure-animation-container">
+      <div class="treasure-chest">
+        <div class="chest-lid">
+          <div class="lid-trim lid-trim-left"></div>
+          <div class="lid-trim lid-trim-right"></div>
+        </div>
+        <div class="chest-body">
+          <div class="body-trim body-trim-left"></div>
+          <div class="body-trim body-trim-right"></div>
+          <div class="chest-lock">
+            <div class="lock-keyhole"></div>
+          </div>
+        </div>
+      </div>
+      <!-- Animated falling coins -->
+      <div class="coin coin-1"></div>
+      <div class="coin coin-2"></div>
+      <div class="coin coin-3"></div>
+      <div class="coin coin-4"></div>
+      <div class="coin coin-5"></div>
+      <div class="coin coin-6"></div>
+    </div>
+    <div class="gold-pot-info">
+      <h3>Treasure Pool</h3>
+      <span class="gold-pot-amount">Rs. {{ remainingPool }}</span>
+      <p class="gold-pot-desc">Remaining from total initial pool (Rs. {{ 30 * 104 * employees.length }})</p>
+    </div>
+  </div>
+</div>
+
+<div class="glass-card table-container">
+  <table class="leaderboard-table">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Employee</th>
+        <th>Total Earnings</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let emp of employees; let i = index" [class.top-three]="i < 3">
+        <td>
+          <span class="rank-badge" [ngClass]="'rank-' + (i + 1)">
+            {{ i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1 }}
+          </span>
+        </td>
+        <td class="name-col">{{ emp.name }}</td>
+        <td class="earnings-col">Rs. {{ emp.totalEarnings }}</td>
+      </tr>
+      <tr *ngIf="employees.length === 0">
+        <td colspan="3" class="empty-state">No employees found.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,76 @@
+.header-section {
+  margin-bottom: 24px;
+}
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
+}
+.admin-section {
+  display: flex;
+  flex-direction: column;
+}
+.admin-section h3 {
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+.admin-section .btn {
+  margin-top: auto;
+  align-self: flex-start;
+}
+.mt-4 { margin-top: 24px; }
+.ml-2 { margin-left: 12px; }
+.section-desc {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin-bottom: 24px;
+}
+.resolve-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.resolve-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+}
+.resolve-match-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.match-date {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+.resolve-inputs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.score-input {
+  width: 60px;
+  text-align: center;
+}
+.empty-state {
+  text-align: center;
+  padding: 24px;
+  color: var(--text-secondary);
+}
+
+.flag-img-small {
+  width: 24px;
+  height: 16px;
+  object-fit: cover;
+  border-radius: 2px;
+  vertical-align: middle;
+  margin-right: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+

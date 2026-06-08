@@ -1,0 +1,76 @@
+<div class="header-section">
+  <h2>Admin Control Panel</h2>
+</div>
+
+<div class="admin-grid">
+  <div class="glass-card admin-section">
+    <h3>Add Employee</h3>
+    <div class="input-group mt-4">
+      <label class="input-label">Employee Name</label>
+      <input type="text" class="input-field" [(ngModel)]="newEmployeeName" placeholder="e.g., Jane Doe">
+    </div>
+    <button class="btn btn-primary" (click)="addEmployee()">Add Employee</button>
+  </div>
+
+  <div class="glass-card admin-section">
+    <h3>Add New Match</h3>
+    <div class="input-group mt-4">
+      <label class="input-label">Team A</label>
+      <input type="text" class="input-field" [(ngModel)]="newMatchTeamA" placeholder="e.g., France">
+    </div>
+    <div class="input-group">
+      <label class="input-label">Team B</label>
+      <input type="text" class="input-field" [(ngModel)]="newMatchTeamB" placeholder="e.g., Brazil">
+    </div>
+    <div class="input-group">
+      <label class="input-label">Match Date & Time</label>
+      <input type="datetime-local" class="input-field" [(ngModel)]="newMatchDate">
+    </div>
+    <div class="input-group">
+      <label class="input-label">Group Name</label>
+      <input type="text" class="input-field" [(ngModel)]="newMatchGroupName" placeholder="e.g., Group A">
+    </div>
+    <button class="btn btn-primary" (click)="addMatch()">Create Match</button>
+  </div>
+</div>
+
+<div class="glass-card mt-4">
+  <h3>Resolve Scheduled Matches</h3>
+  <p class="section-desc">Enter the final scores to calculate points for all employees.</p>
+  
+  <div class="resolve-list">
+    <div class="resolve-item" *ngFor="let match of scheduledMatches">
+      <div class="resolve-match-info">
+        <div>
+          <span style="font-size: 0.75rem; background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 2px 8px; border-radius: 10px; margin-right: 8px; font-weight: 600;">{{ match.groupName }}</span>
+          <strong>
+            <img [src]="match.flagA" [alt]="match.teamA" class="flag-img-small" />
+            {{ match.teamA }}
+          </strong>
+          vs
+          <strong>
+            <img [src]="match.flagB" [alt]="match.teamB" class="flag-img-small" />
+            {{ match.teamB }}
+          </strong>
+        </div>
+        <span class="match-date">{{ match.matchDate | date:'short' }}</span>
+      </div>
+      <div class="resolve-inputs">
+        <input type="number" class="input-field score-input" [(ngModel)]="finalScores[match.id].scoreA" min="0">
+        <span>-</span>
+        <input type="number" class="input-field score-input" [(ngModel)]="finalScores[match.id].scoreB" min="0">
+        <button class="btn btn-primary ml-2" (click)="resolveMatch(match.id)">Set Final Score</button>
+      </div>
+    </div>
+    
+    <div class="empty-state" *ngIf="scheduledMatches.length === 0">
+      No scheduled matches to resolve.
+    </div>
+  </div>
+</div>
+
+<div class="glass-card mt-4" style="border-color: rgba(239, 68, 68, 0.3);">
+  <h3 style="color: var(--danger); border-bottom-color: rgba(239, 68, 68, 0.2);">Danger Zone</h3>
+  <p class="section-desc">Reset the entire application back to its default mock state.</p>
+  <button class="btn btn-primary" style="background: var(--danger); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);" (click)="resetAllData()">Reset All Data</button>
+</div>

@@ -1,0 +1,80 @@
+<div class="header-section">
+  <h2>Match Center</h2>
+  
+  <div class="filters">
+    <button class="btn" [ngClass]="filter === 'all' ? 'btn-primary' : 'btn-secondary'" (click)="filter = 'all'">All</button>
+    <button class="btn" [ngClass]="filter === 'scheduled' ? 'btn-primary' : 'btn-secondary'" (click)="filter = 'scheduled'">Scheduled</button>
+    <button class="btn" [ngClass]="filter === 'completed' ? 'btn-primary' : 'btn-secondary'" (click)="filter = 'completed'">Completed</button>
+  </div>
+</div>
+
+<div class="user-selector glass-card" *ngIf="filter !== 'completed'">
+  <label class="input-label">Predicting As:</label>
+  <select class="input-field" [(ngModel)]="selectedUserId" (change)="onUserChange()">
+    <option *ngFor="let emp of employees" [value]="emp.id">{{ emp.name }}</option>
+  </select>
+</div>
+
+<div class="matches-grid">
+  <div class="match-card glass-card" *ngFor="let match of filteredMatches">
+    
+    <div class="match-header">
+      <div>
+        <span class="status-badge" [ngClass]="match.status">{{ match.status | uppercase }}</span>
+        <span class="group-badge" style="margin-left: 8px;">{{ match.groupName }}</span>
+      </div>
+      <span class="match-date">{{ match.matchDate | date:'medium' }}</span>
+    </div>
+
+    <div class="teams-score">
+      <div class="team">
+        <div class="flag-icon">
+          <img [src]="match.flagA" [alt]="match.teamA" class="flag-img" />
+        </div>
+        <span class="team-name">{{ match.teamA }}</span>
+      </div>
+      <div class="score-display">
+        <ng-container *ngIf="match.status === 'completed'; else scheduledScore">
+          <h2>{{ match.actualScoreA }} - {{ match.actualScoreB }}</h2>
+        </ng-container>
+        <ng-template #scheduledScore>
+          <h2>VS</h2>
+        </ng-template>
+      </div>
+      <div class="team">
+        <div class="flag-icon">
+          <img [src]="match.flagB" [alt]="match.teamB" class="flag-img" />
+        </div>
+        <span class="team-name">{{ match.teamB }}</span>
+      </div>
+    </div>
+
+    <div class="prediction-section" *ngIf="match.status === 'scheduled'">
+      <div class="prediction-inputs" *ngIf="tempPredictions[match.id]">
+        <input type="number" class="input-field score-input" [(ngModel)]="tempPredictions[match.id].scoreA" min="0">
+        <span class="divider">-</span>
+        <input type="number" class="input-field score-input" [(ngModel)]="tempPredictions[match.id].scoreB" min="0">
+      </div>
+      <button class="btn btn-primary predict-btn" (click)="savePrediction(match.id)">Save Prediction</button>
+    </div>
+
+    <div class="results-section" *ngIf="match.status === 'completed'">
+      <h4>Employee Predictions</h4>
+      <div class="prediction-list">
+        <div class="prediction-item" *ngFor="let emp of employees">
+          <span class="emp-name">{{ emp.name }}</span>
+          <ng-container *ngIf="getPredictionForMatch(match.id, emp.id) as pred; else noPred">
+            <span class="pred-score">{{ pred.predictedScoreA }} - {{ pred.predictedScoreB }}</span>
+            <span class="pred-points" [ngClass]="{'points-high': pred.pointsEarned > 0, 'points-low': pred.pointsEarned === 0}">
+              {{ pred.pointsEarned > 0 ? 'Rs. ' + pred.pointsEarned : 'Rs. 0' }}
+            </span>
+          </ng-container>
+          <ng-template #noPred>
+            <span class="no-pred">No prediction</span>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
