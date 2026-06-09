@@ -37,12 +37,14 @@
 <div class="glass-card mt-4">
   <h3>Resolve Scheduled Matches</h3>
   <p class="section-desc">Enter the final scores to calculate points for all employees.</p>
-  
+
   <div class="resolve-list">
     <div class="resolve-item" *ngFor="let match of scheduledMatches">
       <div class="resolve-match-info">
         <div>
-          <span style="font-size: 0.75rem; background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 2px 8px; border-radius: 10px; margin-right: 8px; font-weight: 600;">{{ match.groupName }}</span>
+          <span
+            style="font-size: 0.75rem; background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 2px 8px; border-radius: 10px; margin-right: 8px; font-weight: 600;">{{
+            match.groupName }}</span>
           <strong>
             <img [src]="match.flagA" [alt]="match.teamA" class="flag-img-small" />
             {{ match.teamA }}
@@ -62,7 +64,7 @@
         <button class="btn btn-primary ml-2" (click)="resolveMatch(match.id)">Set Final Score</button>
       </div>
     </div>
-    
+
     <div class="empty-state" *ngIf="scheduledMatches.length === 0">
       No scheduled matches to resolve.
     </div>
@@ -72,17 +74,54 @@
 <div class="glass-card mt-4" style="border-color: rgba(239, 68, 68, 0.3);">
   <h3 style="color: var(--danger); border-bottom-color: rgba(239, 68, 68, 0.2);">Danger Zone</h3>
   <p class="section-desc">Reset the entire application back to its default mock data.</p>
-  <button class="btn btn-primary" style="background: var(--danger); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);" (click)="resetAllData()">Reset All Data</button>
+  <button class="btn btn-primary" style="background: var(--danger); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);"
+    (click)="resetAllData()">Reset All Data</button>
 </div>
 
+<br>
 <div *ngIf="authService.isAdmin()" class="glass-card admin-section">
   <h3>All User Credentials</h3>
   <table class="cred-table">
-    <tr><th>Name</th><th>Username</th><th>Password</th></tr>
-    <tr *ngFor="let user of users">
-      <td>{{ user.name }}</td>
-      <td>{{ user.username }}</td>
-      <td>{{ user.password }}</td>
-    </tr>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Username</th>
+        <th>Password</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <ng-container *ngIf="editingUserId !== user.id">
+          <td>{{ user.name }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.password }}</td>
+          <td>
+            <button class="btn btn-secondary" style="padding: 4px 12px; font-size: 0.85rem;"
+              (click)="startEdit(user)">Edit</button>
+          </td>
+        </ng-container>
+        <ng-container *ngIf="editingUserId === user.id">
+          <td>
+            <input type="text" class="input-field" [(ngModel)]="editingName"
+              style="margin: 0; padding: 4px 8px; height: 30px;">
+          </td>
+          <td>
+            <input type="text" class="input-field" [(ngModel)]="editingUsername"
+              style="margin: 0; padding: 4px 8px; height: 30px;">
+          </td>
+          <td>
+            <input type="text" class="input-field" [(ngModel)]="editingPassword"
+              style="margin: 0; padding: 4px 8px; height: 30px;">
+          </td>
+          <td>
+            <button class="btn btn-primary" style="padding: 4px 12px; font-size: 0.85rem; margin-right: 8px;"
+              (click)="saveUserEdit(user.id)">Save</button>
+            <button class="btn btn-secondary" style="padding: 4px 12px; font-size: 0.85rem; background: var(--danger);"
+              (click)="cancelEdit()">Cancel</button>
+          </td>
+        </ng-container>
+      </tr>
+    </tbody>
   </table>
 </div>

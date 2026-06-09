@@ -20,6 +20,7 @@ export class MatchCenterComponent implements OnInit {
   selectedGroup: string = 'all';
   
   selectedUserId: string = '';
+  currentUserName: string = '';
   tempPredictions: { [matchId: string]: { scoreA: number, scoreB: number } } = {};
 
   constructor(private predictionService: PredictionService, private authService: AuthenticationService, private router: Router) {}
@@ -31,8 +32,11 @@ export class MatchCenterComponent implements OnInit {
       const currentUser = this.authService.getCurrentUser();
       if (currentUser) {
         this.selectedUserId = currentUser.id;
+        this.currentUserName = currentUser.name;
       } else if (u.length > 0 && !this.selectedUserId) {
         this.selectedUserId = u[0].id;
+        const matchedEmp = u.find(emp => emp.id === this.selectedUserId);
+        this.currentUserName = matchedEmp ? matchedEmp.name : '';
       }
       this.loadUserPredictions();
     });

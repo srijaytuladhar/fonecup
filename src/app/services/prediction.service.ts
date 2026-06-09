@@ -345,18 +345,29 @@ export class PredictionService {
   async resetData() {
     const batch = writeBatch(this.db);
 
+    // Delete all predictions
     const predictionsSnap = await getDocs(collection(this.db, 'predictions'));
     predictionsSnap.forEach(d => batch.delete(d.ref));
 
+    // Reset all matches back to 'scheduled' with null scores
     const matchesSnap = await getDocs(collection(this.db, 'matches'));
-    matchesSnap.forEach(d => batch.delete(d.ref));
+    matchesSnap.forEach(d => {
+      batch.update(d.ref, {
+        actualScoreA: null,
+        actualScoreB: null,
+        status: 'scheduled'
+      });
+    });
 
+    // Reset all users' points and earnings to 0
     const usersSnap = await getDocs(collection(this.db, 'users'));
-    usersSnap.forEach(d => batch.delete(d.ref));
+    usersSnap.forEach(d => {
+      batch.update(d.ref, {
+        totalPoints: 0,
+        totalEarnings: 0
+      });
+    });
 
     await batch.commit();
-
-    await this.seedMockUsers();
-    await this.seedMockMatches();
   }
 }

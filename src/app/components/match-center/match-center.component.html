@@ -15,9 +15,7 @@
 
 <div class="user-selector glass-card" *ngIf="filter !== 'completed'">
   <label class="input-label">Predicting As:</label>
-  <select class="input-field" [(ngModel)]="selectedUserId" (change)="onUserChange()" disabled>
-    <option *ngFor="let emp of employees" [value]="emp.id">{{ emp.name }}</option>
-  </select>
+  <span class="user-display-text" style="font-weight: 600; font-size: 1.1rem; color: var(--text-primary); margin-left: 8px;">{{ currentUserName }}</span>
 </div>
 
 <div class="matches-grid">

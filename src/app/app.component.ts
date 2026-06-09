@@ -24,4 +24,9 @@ export class AppComponent {
       this.currentUser = user;
     });
   }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 }

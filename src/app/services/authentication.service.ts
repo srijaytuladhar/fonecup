@@ -77,6 +77,23 @@ export class AuthenticationService {
     await setDoc(doc(this.db, 'users', username), newUser);
   }
 
+  /** Admin can update existing user credentials */
+  async updateUserCredentials(userId: string, updates: Partial<AuthUser>): Promise<void> {
+    if (!this.isAdmin()) {
+      throw new Error('Only admin can update user credentials');
+    }
+    const userRef = doc(this.db, 'users', userId);
+    await setDoc(userRef, updates, { merge: true });
+    
+    // If the updated user is currently logged in, update localStorage and behavior subject too
+    const currentUser = this.getCurrentUser();
+    if (currentUser && currentUser.id === userId) {
+      const updated = { ...currentUser, ...updates };
+      localStorage.setItem('authUser', JSON.stringify(updated));
+      this.currentUserSubject.next(updated);
+    }
+  }
+
 
   /** Generate a username from first name (lower‑cased) */
   private generateUsername(firstName: string): string {

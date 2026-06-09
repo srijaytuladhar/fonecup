@@ -9,6 +9,7 @@
         <a routerLink="/leaderboard" routerLinkActive="active" class="nav-link">Leaderboard</a>
         <a routerLink="/matches" routerLinkActive="active" class="nav-link">Match Center</a>
         <a routerLink="/admin" routerLinkActive="active" class="nav-link" *ngIf="currentUser?.isAdmin">Admin Panel</a>
+        <button (click)="logout()" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.85rem; border-radius: 20px; margin-left: 8px; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);">Logout</button>
       </div>
     </div>
   </div>

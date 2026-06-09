@@ -74,3 +74,37 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
+.cred-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+
+.cred-table th, .cred-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.cred-table th {
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+.cred-table td {
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.cred-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.cred-table td input.input-field {
+  width: 100%;
+  box-sizing: border-box;
+}
+

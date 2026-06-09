@@ -22,6 +22,11 @@ export class AdminPanelComponent implements OnInit {
   scheduledMatches: Match[] = [];
   finalScores: { [matchId: string]: { scoreA: number, scoreB: number } } = {};
 
+  editingUserId: string | null = null;
+  editingName: string = '';
+  editingUsername: string = '';
+  editingPassword: string = '';
+
   constructor(private predictionService: PredictionService, public authService: AuthenticationService) {}
 
   ngOnInit() {
@@ -33,9 +38,42 @@ export class AdminPanelComponent implements OnInit {
         }
       });
     });
-    // Load all user credentials if admin
+    this.loadUsers();
+  }
+
+  loadUsers() {
     if (this.authService.isAdmin()) {
       this.authService.getAllUsers().then(users => this.users = users);
+    }
+  }
+
+  startEdit(user: AuthUser) {
+    this.editingUserId = user.id;
+    this.editingName = user.name;
+    this.editingUsername = user.username;
+    this.editingPassword = user.password;
+  }
+
+  cancelEdit() {
+    this.editingUserId = null;
+  }
+
+  async saveUserEdit(userId: string) {
+    if (!this.editingName.trim() || !this.editingUsername.trim() || !this.editingPassword.trim()) {
+      alert('All fields are required.');
+      return;
+    }
+    try {
+      await this.authService.updateUserCredentials(userId, {
+        name: this.editingName.trim(),
+        username: this.editingUsername.trim(),
+        password: this.editingPassword.trim()
+      });
+      this.editingUserId = null;
+      alert('User credentials updated successfully!');
+      this.loadUsers();
+    } catch (err: any) {
+      alert('Error updating user: ' + err.message);
     }
   }
 
