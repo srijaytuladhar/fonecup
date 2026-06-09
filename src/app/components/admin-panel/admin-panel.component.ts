@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PredictionService, Match } from '../../services/prediction.service';
+import { AuthenticationService, AuthUser } from '../../services/authentication.service';
 
 @Component({
   selector: 'app-admin-panel',
@@ -11,6 +12,7 @@ import { PredictionService, Match } from '../../services/prediction.service';
   styleUrl: './admin-panel.component.css'
 })
 export class AdminPanelComponent implements OnInit {
+  users: AuthUser[] = [];
   newEmployeeName: string = '';
   newMatchTeamA: string = '';
   newMatchTeamB: string = '';
@@ -20,7 +22,7 @@ export class AdminPanelComponent implements OnInit {
   scheduledMatches: Match[] = [];
   finalScores: { [matchId: string]: { scoreA: number, scoreB: number } } = {};
 
-  constructor(private predictionService: PredictionService) {}
+  constructor(private predictionService: PredictionService, public authService: AuthenticationService) {}
 
   ngOnInit() {
     this.predictionService.matches$.subscribe(matches => {
@@ -31,6 +33,10 @@ export class AdminPanelComponent implements OnInit {
         }
       });
     });
+    // Load all user credentials if admin
+    if (this.authService.isAdmin()) {
+      this.authService.getAllUsers().then(users => this.users = users);
+    }
   }
 
   addEmployee() {

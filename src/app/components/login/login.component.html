@@ -1,0 +1,13 @@
+<div class="login-container glass-card">
+  <h2>Login</h2>
+  <div class="input-group">
+    <label class="input-label">Username</label>
+    <input type="text" class="input-field" [(ngModel)]="username" placeholder="Enter username" />
+  </div>
+  <div class="input-group">
+    <label class="input-label">Password</label>
+    <input type="password" class="input-field" [(ngModel)]="password" placeholder="Enter password" />
+  </div>
+  <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <button class="btn btn-primary" (click)="login()">Log In</button>
+</div>

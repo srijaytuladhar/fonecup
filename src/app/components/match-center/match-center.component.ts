@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { PredictionService, Match, Employee, Prediction } from '../../services/prediction.service';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
   selector: 'app-match-center',
@@ -20,13 +22,16 @@ export class MatchCenterComponent implements OnInit {
   selectedUserId: string = '';
   tempPredictions: { [matchId: string]: { scoreA: number, scoreB: number } } = {};
 
-  constructor(private predictionService: PredictionService) {}
+  constructor(private predictionService: PredictionService, private authService: AuthenticationService, private router: Router) {}
 
   ngOnInit() {
     this.predictionService.matches$.subscribe(m => this.matches = m);
     this.predictionService.users$.subscribe(u => {
       this.employees = u;
-      if (u.length > 0 && !this.selectedUserId) {
+      const currentUser = this.authService.getCurrentUser();
+      if (currentUser) {
+        this.selectedUserId = currentUser.id;
+      } else if (u.length > 0 && !this.selectedUserId) {
         this.selectedUserId = u[0].id;
       }
       this.loadUserPredictions();
@@ -72,6 +77,11 @@ export class MatchCenterComponent implements OnInit {
   }
 
   savePrediction(matchId: string) {
+    if (!this.authService.isLoggedIn()) {
+      alert('Please log in before submitting predictions.');
+      this.router.navigate(['/login']);
+      return;
+    }
     if (!this.selectedUserId) return;
     const scores = this.tempPredictions[matchId];
     this.predictionService.savePrediction(this.selectedUserId, matchId, scores.scoreA, scores.scoreB);

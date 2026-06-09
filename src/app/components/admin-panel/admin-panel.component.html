@@ -71,6 +71,18 @@
 
 <div class="glass-card mt-4" style="border-color: rgba(239, 68, 68, 0.3);">
   <h3 style="color: var(--danger); border-bottom-color: rgba(239, 68, 68, 0.2);">Danger Zone</h3>
-  <p class="section-desc">Reset the entire application back to its default mock state.</p>
+  <p class="section-desc">Reset the entire application back to its default mock data.</p>
   <button class="btn btn-primary" style="background: var(--danger); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);" (click)="resetAllData()">Reset All Data</button>
+</div>
+
+<div *ngIf="authService.isAdmin()" class="glass-card admin-section">
+  <h3>All User Credentials</h3>
+  <table class="cred-table">
+    <tr><th>Name</th><th>Username</th><th>Password</th></tr>
+    <tr *ngFor="let user of users">
+      <td>{{ user.name }}</td>
+      <td>{{ user.username }}</td>
+      <td>{{ user.password }}</td>
+    </tr>
+  </table>
 </div>

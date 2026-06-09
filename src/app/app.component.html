@@ -1,13 +1,15 @@
-<nav class="navbar glass-card">
+<nav *ngIf="currentUrl !== '/login'" class="navbar glass-card">
   <div class="container nav-content">
     <div class="brand">
       <img src="/logo.png" alt="Logo" class="brand-logo" />
-      <!-- <h1>FonePay WorldCup</h1> -->
     </div>
-    <div class="nav-links">
-      <a routerLink="/leaderboard" routerLinkActive="active" class="nav-link">Leaderboard</a>
-      <a routerLink="/matches" routerLinkActive="active" class="nav-link">Match Center</a>
-      <a routerLink="/admin" routerLinkActive="active" class="nav-link">Admin Panel</a>
+    <div class="nav-right">
+      <span class="user-greeting" *ngIf="currentUser">Hello, {{ currentUser.name }}</span>
+      <div class="nav-links">
+        <a routerLink="/leaderboard" routerLinkActive="active" class="nav-link">Leaderboard</a>
+        <a routerLink="/matches" routerLinkActive="active" class="nav-link">Match Center</a>
+        <a routerLink="/admin" routerLinkActive="active" class="nav-link" *ngIf="currentUser?.isAdmin">Admin Panel</a>
+      </div>
     </div>
   </div>
 </nav>
