@@ -10,4 +10,13 @@
   </div>
   <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
   <button class="btn btn-primary" (click)="login()">Log In</button>
+  <button class="btn btn-secondary" (click)="signUp()">Sign Up</button>
+</div>
+
+<div class="modal-overlay" *ngIf="showPopup" (click)="closePopup()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <img src="esewa.jpg" alt="Esewa" class="modal-image" />
+    <p class="modal-text">Pay Rs. 3120 for registration</p>
+    <button class="btn btn-primary close-btn" (click)="closePopup()">Close</button>
+  </div>
 </div>

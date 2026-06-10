@@ -18,6 +18,15 @@ export class LoginComponent {
 
   constructor(private authService: AuthenticationService, private router: Router) { }
 
+  showPopup: boolean = false;
+
+  signUp() {
+    this.showPopup = true;
+  }
+
+  closePopup() {
+    this.showPopup = false;
+  }
   async login() {
     if (!this.username.trim() || !this.password) {
       this.errorMessage = 'Username and password are required';
@@ -26,7 +35,7 @@ export class LoginComponent {
     try {
       await this.authService.loginWithCredentials(this.username.trim(), this.password);
       this.router.navigate(['/leaderboard']);
-    } catch (err:any) {
+    } catch (err: any) {
       this.errorMessage = err.message || 'Login failed';
     }
   }
