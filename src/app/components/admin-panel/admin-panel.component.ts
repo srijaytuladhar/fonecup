@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PredictionService, Match } from '../../services/prediction.service';
+import { PredictionService, Match, Prediction } from '../../services/prediction.service';
 import { AuthenticationService, AuthUser } from '../../services/authentication.service';
 
 @Component({
@@ -21,6 +21,8 @@ export class AdminPanelComponent implements OnInit {
   
   scheduledMatches: Match[] = [];
   finalScores: { [matchId: string]: { scoreA: number, scoreB: number } } = {};
+  allPredictions: Prediction[] = [];
+  expandedPredictionStatus: { [matchId: string]: boolean } = {};
 
   editingUserId: string | null = null;
   editingName: string = '';
@@ -38,6 +40,9 @@ export class AdminPanelComponent implements OnInit {
           this.finalScores[m.id] = { scoreA: 0, scoreB: 0 };
         }
       });
+    });
+    this.predictionService.predictions$.subscribe(preds => {
+      this.allPredictions = preds;
     });
     this.loadUsers();
   }
@@ -93,12 +98,45 @@ export class AdminPanelComponent implements OnInit {
     }
   }
 
-  addEmployee() {
+  async addEmployee() {
     if (this.newEmployeeName.trim()) {
-      this.predictionService.addUser(this.newEmployeeName.trim());
+      await this.predictionService.addUser(this.newEmployeeName.trim());
       this.newEmployeeName = '';
       alert('Employee added!');
+      this.loadUsers();
     }
+  }
+
+  getParticipantsCount(): number {
+    return this.users.filter(u => !u.isAdmin).length;
+  }
+
+  getPredictionCount(matchId: string): number {
+    return this.allPredictions.filter(p => p.matchId === matchId).length;
+  }
+
+  togglePredictionStatus(matchId: string) {
+    this.expandedPredictionStatus[matchId] = !this.expandedPredictionStatus[matchId];
+  }
+
+  getUserPredictionScore(matchId: string, userId: string) {
+    const pred = this.allPredictions.find(p => p.matchId === matchId && p.userId === userId);
+    return pred ? { scoreA: pred.predictedScoreA, scoreB: pred.predictedScoreB } : null;
+  }
+
+  getPredictionStatus(matchId: string) {
+    const predicted: AuthUser[] = [];
+    const notPredicted: AuthUser[] = [];
+    const participants = this.users.filter(u => !u.isAdmin);
+    participants.forEach(user => {
+      const hasPred = this.allPredictions.some(p => p.matchId === matchId && p.userId === user.id);
+      if (hasPred) {
+        predicted.push(user);
+      } else {
+        notPredicted.push(user);
+      }
+    });
+    return { predicted, notPredicted };
   }
 
   addMatch() {

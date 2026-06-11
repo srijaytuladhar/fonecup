@@ -39,37 +39,72 @@
   <p class="section-desc">Enter the final scores to calculate points for all employees.</p>
 
   <div class="resolve-list">
-    <div class="resolve-item" *ngFor="let match of scheduledMatches">
-      <div class="resolve-match-info">
-        <div>
-          <span
-            style="font-size: 0.75rem; background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 2px 8px; border-radius: 10px; margin-right: 8px; font-weight: 600;">{{
-            match.groupName }}</span>
+    <div class="resolve-card" *ngFor="let match of scheduledMatches">
+      <div class="resolve-item">
+        <div class="resolve-match-info">
+          <div>
+            <span
+              style="font-size: 0.75rem; background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 2px 8px; border-radius: 10px; margin-right: 8px; font-weight: 600;">{{
+              match.groupName }}</span>
+            <button 
+              (click)="toggleMatchBlock(match.id, match.isBlocked)" 
+              class="btn block-toggle-btn"
+              [ngClass]="match.isBlocked ? 'blocked' : 'unblocked'"
+              style="padding: 2px 8px; font-size: 0.75rem; border-radius: 10px; font-weight: 600; margin-right: 8px;"
+            >
+              {{ match.isBlocked ? '🔒 Blocked' : '🔓 Allow Predictions' }}
+            </button>
+            <strong>
+              <img [src]="match.flagA" [alt]="match.teamA" class="flag-img-small" />
+              {{ match.teamA }}
+            </strong>
+            vs
+            <strong>
+              <img [src]="match.flagB" [alt]="match.teamB" class="flag-img-small" />
+              {{ match.teamB }}
+            </strong>
+          </div>
+          <span class="match-date">{{ match.matchDate | date:'short' }}</span>
+          
           <button 
-            (click)="toggleMatchBlock(match.id, match.isBlocked)" 
-            class="btn block-toggle-btn"
-            [ngClass]="match.isBlocked ? 'blocked' : 'unblocked'"
-            style="padding: 2px 8px; font-size: 0.75rem; border-radius: 10px; font-weight: 600; margin-right: 8px;"
+            (click)="togglePredictionStatus(match.id)" 
+            class="btn btn-secondary"
+            style="padding: 4px 10px; font-size: 0.75rem; border-radius: 20px; font-weight: 600; margin-top: 8px; align-self: flex-start; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); color: var(--text-primary);"
           >
-            {{ match.isBlocked ? '🔒 Blocked' : '🔓 Allow Predictions' }}
+            {{ expandedPredictionStatus[match.id] ? 'Hide Predictions' : 'Show Predictions (' + getPredictionCount(match.id) + '/' + getParticipantsCount() + ')' }}
           </button>
-          <strong>
-            <img [src]="match.flagA" [alt]="match.teamA" class="flag-img-small" />
-            {{ match.teamA }}
-          </strong>
-          vs
-          <strong>
-            <img [src]="match.flagB" [alt]="match.teamB" class="flag-img-small" />
-            {{ match.teamB }}
-          </strong>
         </div>
-        <span class="match-date">{{ match.matchDate | date:'short' }}</span>
+        <div class="resolve-inputs">
+          <input type="number" class="input-field score-input" [(ngModel)]="finalScores[match.id].scoreA" min="0">
+          <span>-</span>
+          <input type="number" class="input-field score-input" [(ngModel)]="finalScores[match.id].scoreB" min="0">
+          <button class="btn btn-primary ml-2" (click)="resolveMatch(match.id)">Set Final Score</button>
+        </div>
       </div>
-      <div class="resolve-inputs">
-        <input type="number" class="input-field score-input" [(ngModel)]="finalScores[match.id].scoreA" min="0">
-        <span>-</span>
-        <input type="number" class="input-field score-input" [(ngModel)]="finalScores[match.id].scoreB" min="0">
-        <button class="btn btn-primary ml-2" (click)="resolveMatch(match.id)">Set Final Score</button>
+
+      <!-- Collapsible prediction status -->
+      <div class="prediction-status-details" *ngIf="expandedPredictionStatus[match.id]">
+        <div class="status-group">
+          <span class="group-title predicted-title">Predicted ({{ getPredictionStatus(match.id).predicted.length }})</span>
+          <div class="user-badge-list">
+            <span class="user-badge predicted-badge" *ngFor="let user of getPredictionStatus(match.id).predicted">
+              {{ user.name }}
+              <span class="predicted-score-sub" *ngIf="getUserPredictionScore(match.id, user.id) as score">
+                {{ score.scoreA }} - {{ score.scoreB }}
+              </span>
+            </span>
+            <span class="empty-badge-text" *ngIf="getPredictionStatus(match.id).predicted.length === 0">No users have predicted yet.</span>
+          </div>
+        </div>
+        <div class="status-group" style="margin-top: 10px;">
+          <span class="group-title not-predicted-title">Not Predicted ({{ getPredictionStatus(match.id).notPredicted.length }})</span>
+          <div class="user-badge-list">
+            <span class="user-badge not-predicted-badge" *ngFor="let user of getPredictionStatus(match.id).notPredicted">
+              {{ user.name }}
+            </span>
+            <span class="empty-badge-text" *ngIf="getPredictionStatus(match.id).notPredicted.length === 0">All users have predicted!</span>
+          </div>
+        </div>
       </div>
     </div>
 
