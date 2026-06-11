@@ -18,6 +18,7 @@ export interface Employee {
   name: string;
   totalPoints: number;
   totalEarnings: number;
+  championPrediction?: string;
 }
 
 export interface Match {

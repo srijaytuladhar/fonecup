@@ -41,6 +41,7 @@
       <tr>
         <th>Rank</th>
         <th>Employee</th>
+        <th>Champion Pick</th>
         <th>Total Earnings</th>
       </tr>
     </thead>
@@ -52,10 +53,17 @@
           </span>
         </td>
         <td class="name-col">{{ emp.name }}</td>
+        <td class="champion-col">
+          <div *ngIf="emp.championPrediction" class="champion-pick-badge">
+            <img [src]="getFlag(emp.championPrediction)" [alt]="emp.championPrediction" class="flag-icon-small" />
+            <span>{{ emp.championPrediction }}</span>
+          </div>
+          <span *ngIf="!emp.championPrediction" class="no-prediction">-</span>
+        </td>
         <td class="earnings-col">Rs. {{ emp.totalEarnings }}</td>
       </tr>
       <tr *ngIf="employees.length === 0">
-        <td colspan="3" class="empty-state">No employees found.</td>
+        <td colspan="4" class="empty-state">No employees found.</td>
       </tr>
     </tbody>
   </table>

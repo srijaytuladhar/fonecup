@@ -10,6 +10,7 @@ export interface AuthUser {
   username: string;
   password: string;
   isAdmin: boolean;
+  championPrediction?: string;
 }
 
 /**
@@ -139,6 +140,19 @@ export class AuthenticationService {
     localStorage.setItem('authUser', JSON.stringify(user));
     this.currentUserSubject.next(user);
     return user;
+  }
+
+  async saveChampionPrediction(userId: string, teamName: string): Promise<void> {
+    const userRef = doc(this.db, 'users', userId);
+    await setDoc(userRef, { championPrediction: teamName }, { merge: true });
+    
+    // Update local state if this is the logged in user
+    const currentUser = this.getCurrentUser();
+    if (currentUser && currentUser.id === userId) {
+      const updated = { ...currentUser, championPrediction: teamName };
+      localStorage.setItem('authUser', JSON.stringify(updated));
+      this.currentUserSubject.next(updated);
+    }
   }
 
   logout(): void {

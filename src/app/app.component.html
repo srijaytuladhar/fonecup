@@ -6,6 +6,11 @@
     <div class="nav-right">
       <span class="user-greeting" *ngIf="currentUser">Hello, {{ currentUser.name }}</span>
       <div class="nav-links">
+        <button *ngIf="currentUser" (click)="openChampionModal()" class="champion-pick-btn" [class.no-pick]="!currentUser?.championPrediction">
+          <span class="trophy-emoji">🏆</span>
+          <img *ngIf="currentUser?.championPrediction" [src]="getFlag(currentUser.championPrediction)" class="nav-flag-icon" />
+          <span class="btn-text">{{ currentUser?.championPrediction ? currentUser.championPrediction : 'Predict Champion' }}</span>
+        </button>
         <a routerLink="/leaderboard" routerLinkActive="active" class="nav-link">Leaderboard</a>
         <a routerLink="/matches" routerLinkActive="active" class="nav-link">Match Center</a>
         <a routerLink="/admin" routerLinkActive="active" class="nav-link" *ngIf="currentUser?.isAdmin">Admin Panel</a>
@@ -18,3 +23,38 @@
 <main class="container main-content">
   <router-outlet></router-outlet>
 </main>
+
+<!-- Champion Prediction Modal -->
+<div class="modal-overlay" *ngIf="isChampionModalOpen">
+  <div class="modal-content champion-modal-card glass-card">
+    <div class="modal-header">
+      <h3>Predict World Cup Champion</h3>
+      <button class="close-btn" (click)="closeChampionModal()">&times;</button>
+    </div>
+    <div class="modal-body scrollable-body">
+      <p class="modal-instruction">Select the country you predict will win the World Cup 🏆</p>
+      
+      <div class="groups-grid">
+        <div class="group-card" *ngFor="let group of groups | keyvalue">
+          <h4 class="group-title">{{ group.key }}</h4>
+          <div class="teams-list">
+            <div 
+              *ngFor="let team of group.value" 
+              class="team-option" 
+              [class.selected]="selectedChampion === team"
+              (click)="selectTeam(team)"
+            >
+              <img [src]="getFlag(team)" [alt]="team" class="modal-flag-icon" />
+              <span class="team-name">{{ team }}</span>
+              <span class="check-badge" *ngIf="selectedChampion === team">✓</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeChampionModal()">Cancel</button>
+      <button class="btn btn-primary btn-save" (click)="saveChampionSelection()">Save Prediction</button>
+    </div>
+  </div>
+</div>

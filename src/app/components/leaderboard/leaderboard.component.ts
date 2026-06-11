@@ -30,4 +30,7 @@ export class LeaderboardComponent implements OnInit {
     this.remainingPool = this.predictionService.getRemainingPool();
   }
 
+  getFlag(teamName: string): string {
+    return this.predictionService.getFlag(teamName);
+  }
 }
