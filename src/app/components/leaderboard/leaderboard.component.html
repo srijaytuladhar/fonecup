@@ -61,7 +61,7 @@
         <td class="champion-col">
           <div *ngIf="emp.championPrediction" class="champion-pick-badge">
             <img [src]="getFlag(emp.championPrediction)" [alt]="emp.championPrediction" class="flag-icon-small" />
-            <span>{{ emp.championPrediction }}</span>
+            <span class="champion-team-text">{{ emp.championPrediction }}</span>
           </div>
           <span *ngIf="!emp.championPrediction" class="no-prediction">-</span>
         </td>

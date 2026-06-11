@@ -150,3 +150,42 @@
 .points-high { color: var(--success); }
 .points-low { color: #fbbf24; }
 .no-pred { color: var(--text-secondary); font-style: italic; }
+
+@media (max-width: 768px) {
+  .header-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .filters {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .filters select, .filters button {
+    font-size: 0.85rem;
+  }
+  .user-selector {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+  .user-selector .input-field {
+    width: 100%;
+  }
+  .matches-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .team-name {
+    font-size: 1rem;
+  }
+  .flag-img {
+    width: 48px;
+    height: 32px;
+  }
+  .score-display h2 {
+    font-size: 1.5rem;
+    margin: 0 8px;
+  }
+}

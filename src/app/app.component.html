@@ -1,36 +1,59 @@
-<nav *ngIf="currentUrl !== '/login'" class="navbar glass-card">
-  <div class="container nav-content">
-    <div class="brand">
-      <img src="/logo.png" alt="Logo" class="brand-logo" />
+<header *ngIf="currentUrl !== '/login'" class="app-header glass-card">
+  <div class="brand">
+    <img src="/logo.png" alt="Logo" class="brand-logo" />
+  </div>
+  
+  <div class="header-right">
+    <!-- Desktop Navigation Links -->
+    <div class="desktop-nav-links">
+      <a routerLink="/leaderboard" routerLinkActive="active" class="nav-link">Leaderboard</a>
+      <a routerLink="/matches" routerLinkActive="active" class="nav-link">Match Center</a>
+      <a routerLink="/admin" routerLinkActive="active" class="nav-link" *ngIf="currentUser?.isAdmin">Admin Panel</a>
     </div>
-    <div class="nav-right">
+
+    <!-- Quick Actions & Greeting -->
+    <div class="header-actions">
       <span class="user-greeting" *ngIf="currentUser">Hello, {{ currentUser.name }}</span>
-      <div class="nav-links">
-        <button *ngIf="currentUser" (click)="openChampionModal()" class="champion-pick-btn"
-          [class.no-pick]="!currentUser?.championPrediction">
-          <span class="trophy-emoji">🏆</span>
-          <img *ngIf="currentUser?.championPrediction" [src]="getFlag(currentUser.championPrediction)"
-            class="nav-flag-icon" />
-          <span class="btn-text">{{ currentUser?.championPrediction ? currentUser.championPrediction : 'Predict
-            Champion' }}</span>
-        </button>
-        <a routerLink="/leaderboard" routerLinkActive="active" class="nav-link">Leaderboard</a>
-        <a routerLink="/matches" routerLinkActive="active" class="nav-link">Match Center</a>
-        <a routerLink="/admin" routerLinkActive="active" class="nav-link" *ngIf="currentUser?.isAdmin">Admin Panel</a>
-        <button *ngIf="currentUser" (click)="toggleAudio()" class="audio-control-btn" [class.playing]="isPlaying">
-          <span class="audio-wave" *ngIf="isPlaying">
-            <span></span>
-            <span></span>
-            <span></span>
-          </span>
-          <span class="music-icon">{{ isPlaying ? '🔊' : '🔇' }}</span>
-          <span class="btn-text">Wavin' Flag</span>
-        </button>
-        <button (click)="logout()" class="btn btn-secondary"
-          style="padding: 6px 14px; font-size: 0.85rem; border-radius: 20px; margin-left: 8px; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);">Logout</button>
-      </div>
+      
+      <button *ngIf="currentUser" (click)="openChampionModal()" class="champion-pick-btn" [class.no-pick]="!currentUser?.championPrediction">
+        <span class="trophy-emoji">🏆</span>
+        <img *ngIf="currentUser?.championPrediction" [src]="getFlag(currentUser.championPrediction)" class="nav-flag-icon" />
+        <span class="btn-text">{{ currentUser?.championPrediction ? currentUser.championPrediction : 'Predict Champion' }}</span>
+      </button>
+
+      <button *ngIf="currentUser" (click)="toggleAudio()" class="audio-control-btn" [class.playing]="isPlaying">
+        <span class="audio-wave" *ngIf="isPlaying">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+        <span class="music-icon">{{ isPlaying ? '🔊' : '🔇' }}</span>
+        <span class="btn-text">Wavin' Flag</span>
+      </button>
+
+      <button (click)="logout()" class="btn btn-logout-desktop">Logout</button>
     </div>
   </div>
+</header>
+
+<!-- Mobile Navigation Bar (Bottom Tab Bar) -->
+<nav *ngIf="currentUrl !== '/login'" class="mobile-navbar glass-card">
+  <a routerLink="/leaderboard" routerLinkActive="active" class="mobile-nav-link">
+    <span class="nav-icon">📊</span>
+    <span class="nav-label">Leaderboard</span>
+  </a>
+  <a routerLink="/matches" routerLinkActive="active" class="mobile-nav-link">
+    <span class="nav-icon">⚽</span>
+    <span class="nav-label">Match Center</span>
+  </a>
+  <a routerLink="/admin" routerLinkActive="active" class="mobile-nav-link" *ngIf="currentUser?.isAdmin">
+    <span class="nav-icon">⚙️</span>
+    <span class="nav-label">Admin</span>
+  </a>
+  <button (click)="logout()" class="mobile-nav-link logout-btn">
+    <span class="nav-icon">🚪</span>
+    <span class="nav-label">Logout</span>
+  </button>
 </nav>
 
 <main class="container main-content">

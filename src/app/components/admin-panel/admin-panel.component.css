@@ -142,3 +142,31 @@
   color: var(--text-primary);
 }
 
+@media (max-width: 768px) {
+  .admin-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .resolve-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  .resolve-inputs {
+    justify-content: flex-end;
+    width: 100%;
+  }
+  .resolve-inputs .btn {
+    flex: 1;
+  }
+  .cred-table {
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+  }
+  .cred-table th, .cred-table td {
+    padding: 10px 8px;
+    font-size: 0.85rem;
+  }
+}
+
