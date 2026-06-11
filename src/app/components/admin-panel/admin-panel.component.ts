@@ -112,6 +112,17 @@ export class AdminPanelComponent implements OnInit {
     }
   }
 
+  toggleMatchBlock(matchId: string, currentStatus: boolean | undefined) {
+    const nextStatus = !currentStatus;
+    this.predictionService.toggleMatchBlock(matchId, nextStatus)
+      .then(() => {
+        alert(`Match predictions ${nextStatus ? 'blocked' : 'unblocked'} successfully!`);
+      })
+      .catch(err => {
+        alert('Error updating block status: ' + err.message);
+      });
+  }
+
   resolveMatch(matchId: string) {
     const scores = this.finalScores[matchId];
     if (scores.scoreA >= 0 && scores.scoreB >= 0) {

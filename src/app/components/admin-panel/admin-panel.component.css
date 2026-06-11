@@ -142,6 +142,18 @@
   color: var(--text-primary);
 }
 
+.block-toggle-btn {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.block-toggle-btn.blocked {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
 @media (max-width: 768px) {
   .admin-grid {
     grid-template-columns: 1fr;

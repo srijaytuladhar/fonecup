@@ -45,6 +45,14 @@
           <span
             style="font-size: 0.75rem; background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 2px 8px; border-radius: 10px; margin-right: 8px; font-weight: 600;">{{
             match.groupName }}</span>
+          <button 
+            (click)="toggleMatchBlock(match.id, match.isBlocked)" 
+            class="btn block-toggle-btn"
+            [ngClass]="match.isBlocked ? 'blocked' : 'unblocked'"
+            style="padding: 2px 8px; font-size: 0.75rem; border-radius: 10px; font-weight: 600; margin-right: 8px;"
+          >
+            {{ match.isBlocked ? '🔒 Blocked' : '🔓 Allow Predictions' }}
+          </button>
           <strong>
             <img [src]="match.flagA" [alt]="match.teamA" class="flag-img-small" />
             {{ match.teamA }}

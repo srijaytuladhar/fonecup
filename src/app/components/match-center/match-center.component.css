@@ -206,6 +206,39 @@
   transform: scale(0.95);
 }
 
+.blocked-prediction-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px dashed rgba(239, 68, 68, 0.3);
+  padding: 16px;
+  border-radius: 16px;
+  text-align: center;
+  margin-top: 8px;
+}
+
+.lock-icon {
+  font-size: 1.5rem;
+}
+
+.blocked-text {
+  color: #f87171;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.locked-prediction-value {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: 4px;
+}
+
 @media (max-width: 768px) {
   .header-section {
     flex-direction: column;

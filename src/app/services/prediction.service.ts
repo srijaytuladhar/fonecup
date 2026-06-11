@@ -33,6 +33,7 @@ export interface Match {
   actualScoreB: number | null;
   status: 'scheduled' | 'completed';
   groupName: string;
+  isBlocked?: boolean;
 }
 
 export interface Prediction {
@@ -324,6 +325,12 @@ export class PredictionService {
   }
 
   async savePrediction(userId: string, matchId: string, scoreA: number, scoreB: number) {
+    const matches = this.getMatches();
+    const match = matches.find(m => m.id === matchId);
+    if (match?.isBlocked) {
+      throw new Error('Predictions are blocked for this match.');
+    }
+
     const predictions = this.getPredictions();
     const existing = predictions.find(p => p.userId === userId && p.matchId === matchId);
     const id = existing ? existing.id : 'p' + Date.now();
@@ -337,6 +344,11 @@ export class PredictionService {
       pointsEarned: existing ? existing.pointsEarned : 0
     };
     await setDoc(doc(this.db, 'predictions', id), newPrediction);
+  }
+
+  async toggleMatchBlock(matchId: string, isBlocked: boolean) {
+    const matchRef = doc(this.db, 'matches', matchId);
+    await updateDoc(matchRef, { isBlocked });
   }
 
   updateRules(rules: PoolRules) {
