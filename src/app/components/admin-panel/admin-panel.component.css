@@ -108,3 +108,37 @@
   box-sizing: border-box;
 }
 
+.status-toggle-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 20px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  text-align: center;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.status-toggle-badge.paid {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.status-toggle-badge:hover {
+  transform: scale(1.05);
+}
+
+.paid-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+

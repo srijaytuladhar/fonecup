@@ -26,6 +26,7 @@ export class AdminPanelComponent implements OnInit {
   editingName: string = '';
   editingUsername: string = '';
   editingPassword: string = '';
+  editingIsPaid: boolean = false;
 
   constructor(private predictionService: PredictionService, public authService: AuthenticationService) {}
 
@@ -52,6 +53,7 @@ export class AdminPanelComponent implements OnInit {
     this.editingName = user.name;
     this.editingUsername = user.username;
     this.editingPassword = user.password;
+    this.editingIsPaid = !!user.isPaid;
   }
 
   cancelEdit() {
@@ -67,13 +69,27 @@ export class AdminPanelComponent implements OnInit {
       await this.authService.updateUserCredentials(userId, {
         name: this.editingName.trim(),
         username: this.editingUsername.trim(),
-        password: this.editingPassword.trim()
+        password: this.editingPassword.trim(),
+        isPaid: this.editingIsPaid
       });
       this.editingUserId = null;
       alert('User credentials updated successfully!');
       this.loadUsers();
     } catch (err: any) {
       alert('Error updating user: ' + err.message);
+    }
+  }
+
+  async togglePaidStatus(user: AuthUser) {
+    try {
+      const newPaid = !user.isPaid;
+      await this.authService.updateUserCredentials(user.id, {
+        isPaid: newPaid
+      });
+      user.isPaid = newPaid;
+      this.loadUsers();
+    } catch (err: any) {
+      alert('Error updating paid status: ' + err.message);
     }
   }
 

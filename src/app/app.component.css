@@ -338,3 +338,21 @@
 .btn-save:hover {
   box-shadow: 0 4px 20px rgba(59, 130, 246, 0.5);
 }
+
+.modal-warning {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  color: #fbbf24;
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.warning-icon {
+  font-size: 1.1rem;
+}

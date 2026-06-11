@@ -87,6 +87,7 @@
         <th>Name</th>
         <th>Username</th>
         <th>Password</th>
+        <th>Paid Status</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -96,6 +97,16 @@
           <td>{{ user.name }}</td>
           <td>{{ user.username }}</td>
           <td>{{ user.password }}</td>
+          <td>
+            <span 
+              (click)="togglePaidStatus(user)" 
+              class="status-toggle-badge" 
+              [class.paid]="user.isPaid"
+              style="cursor: pointer;"
+            >
+              {{ user.isPaid ? 'Paid ✅' : 'Unpaid ❌' }}
+            </span>
+          </td>
           <td>
             <button class="btn btn-secondary" style="padding: 4px 12px; font-size: 0.85rem;"
               (click)="startEdit(user)">Edit</button>
@@ -113,6 +124,11 @@
           <td>
             <input type="text" class="input-field" [(ngModel)]="editingPassword"
               style="margin: 0; padding: 4px 8px; height: 30px;">
+          </td>
+          <td>
+            <label class="paid-checkbox-label">
+              <input type="checkbox" [(ngModel)]="editingIsPaid"> Paid
+            </label>
           </td>
           <td>
             <button class="btn btn-primary" style="padding: 4px 12px; font-size: 0.85rem; margin-right: 8px;"

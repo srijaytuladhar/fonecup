@@ -11,6 +11,7 @@ export interface AuthUser {
   password: string;
   isAdmin: boolean;
   championPrediction?: string;
+  isPaid?: boolean;
 }
 
 /**
@@ -73,7 +74,8 @@ export class AuthenticationService {
       name,
       username,
       password,
-      isAdmin: false
+      isAdmin: false,
+      isPaid: false
     };
     await setDoc(doc(this.db, 'users', username), newUser);
   }

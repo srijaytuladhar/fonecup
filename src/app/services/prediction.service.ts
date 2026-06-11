@@ -19,6 +19,7 @@ export interface Employee {
   totalPoints: number;
   totalEarnings: number;
   championPrediction?: string;
+  isPaid?: boolean;
 }
 
 export interface Match {
@@ -291,7 +292,8 @@ export class PredictionService {
       id,
       name,
       totalPoints: 0,
-      totalEarnings: 0
+      totalEarnings: 0,
+      isPaid: false
     };
     await setDoc(doc(this.db, 'users', id), newUser);
   }

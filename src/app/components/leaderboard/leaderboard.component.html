@@ -52,7 +52,12 @@
             {{ i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1 }}
           </span>
         </td>
-        <td class="name-col">{{ emp.name }}</td>
+        <td class="name-col">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span>{{ emp.name }}</span>
+            <span *ngIf="emp.isPaid" class="paid-badge">Paid</span>
+          </div>
+        </td>
         <td class="champion-col">
           <div *ngIf="emp.championPrediction" class="champion-pick-badge">
             <img [src]="getFlag(emp.championPrediction)" [alt]="emp.championPrediction" class="flag-icon-small" />
