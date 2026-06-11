@@ -54,9 +54,17 @@
 
     <div class="prediction-section" *ngIf="match.status === 'scheduled'">
       <div class="prediction-inputs" *ngIf="tempPredictions[match.id]">
-        <input type="number" class="input-field score-input" [(ngModel)]="tempPredictions[match.id].scoreA" min="0">
+        <div class="score-control">
+          <button class="score-btn down" (click)="adjustScore(match.id, 'scoreA', -1)">-</button>
+          <input type="text" class="input-field score-input" [value]="tempPredictions[match.id].scoreA" readonly>
+          <button class="score-btn up" (click)="adjustScore(match.id, 'scoreA', 1)">+</button>
+        </div>
         <span class="divider">-</span>
-        <input type="number" class="input-field score-input" [(ngModel)]="tempPredictions[match.id].scoreB" min="0">
+        <div class="score-control">
+          <button class="score-btn down" (click)="adjustScore(match.id, 'scoreB', -1)">-</button>
+          <input type="text" class="input-field score-input" [value]="tempPredictions[match.id].scoreB" readonly>
+          <button class="score-btn up" (click)="adjustScore(match.id, 'scoreB', 1)">+</button>
+        </div>
       </div>
       <button class="btn btn-primary predict-btn" (click)="savePrediction(match.id)">Save Prediction</button>
     </div>

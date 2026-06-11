@@ -80,6 +80,15 @@ export class MatchCenterComponent implements OnInit {
     });
   }
 
+  adjustScore(matchId: string, team: 'scoreA' | 'scoreB', amount: number) {
+    if (!this.tempPredictions[matchId]) return;
+    const current = this.tempPredictions[matchId][team];
+    const updated = current + amount;
+    if (updated >= 0) {
+      this.tempPredictions[matchId][team] = updated;
+    }
+  }
+
   savePrediction(matchId: string) {
     if (!this.authService.isLoggedIn()) {
       alert('Please log in before submitting predictions.');
