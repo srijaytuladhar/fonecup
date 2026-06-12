@@ -68,30 +68,30 @@ async function seed() {
   console.log("Users Seeded Successfully!");
   console.log("Seeding Matches...");
   const originalMatches = [
-    { id: 'm1', teamA: 'Mexico', teamB: 'South Africa', matchDate: '2026-06-11T15:00:00Z', groupName: 'Group A' },
-    { id: 'm2', teamA: 'Korea Republic', teamB: 'Czechia', matchDate: '2026-06-11T18:00:00Z', groupName: 'Group A' },
-    { id: 'm3', teamA: 'Canada', teamB: 'Bosnia and Herzegovina', matchDate: '2026-06-12T15:00:00Z', groupName: 'Group B' },
-    { id: 'm4', teamA: 'USA', teamB: 'Paraguay', matchDate: '2026-06-12T18:00:00Z', groupName: 'Group D' },
-    { id: 'm5', teamA: 'Qatar', teamB: 'Switzerland', matchDate: '2026-06-13T15:00:00Z', groupName: 'Group B' },
-    { id: 'm6', teamA: 'Brazil', teamB: 'Morocco', matchDate: '2026-06-13T18:00:00Z', groupName: 'Group C' },
-    { id: 'm7', teamA: 'Haiti', teamB: 'Scotland', matchDate: '2026-06-13T21:00:00Z', groupName: 'Group C' },
-    { id: 'm8', teamA: 'Australia', teamB: 'Türkiye', matchDate: '2026-06-13T23:00:00Z', groupName: 'Group D' },
-    { id: 'm9', teamA: 'Germany', teamB: 'Curaçao', matchDate: '2026-06-14T15:00:00Z', groupName: 'Group E' },
-    { id: 'm10', teamA: 'Côte d\'Ivoire', teamB: 'Ecuador', matchDate: '2026-06-14T18:00:00Z', groupName: 'Group E' },
-    { id: 'm11', teamA: 'Netherlands', teamB: 'Japan', matchDate: '2026-06-14T21:00:00Z', groupName: 'Group F' },
-    { id: 'm12', teamA: 'Sweden', teamB: 'Tunisia', matchDate: '2026-06-14T23:00:00Z', groupName: 'Group F' },
-    { id: 'm13', teamA: 'Belgium', teamB: 'Egypt', matchDate: '2026-06-15T15:00:00Z', groupName: 'Group G' },
-    { id: 'm14', teamA: 'IR Iran', teamB: 'New Zealand', matchDate: '2026-06-15T18:00:00Z', groupName: 'Group G' },
-    { id: 'm15', teamA: 'Spain', teamB: 'Cabo Verde', matchDate: '2026-06-15T21:00:00Z', groupName: 'Group H' },
-    { id: 'm16', teamA: 'Saudi Arabia', teamB: 'Uruguay', matchDate: '2026-06-15T23:00:00Z', groupName: 'Group H' },
-    { id: 'm17', teamA: 'France', teamB: 'Senegal', matchDate: '2026-06-16T15:00:00Z', groupName: 'Group I' },
-    { id: 'm18', teamA: 'Iraq', teamB: 'Norway', matchDate: '2026-06-16T18:00:00Z', groupName: 'Group I' },
-    { id: 'm19', teamA: 'Argentina', teamB: 'Algeria', matchDate: '2026-06-16T21:00:00Z', groupName: 'Group J' },
-    { id: 'm20', teamA: 'Austria', teamB: 'Jordan', matchDate: '2026-06-16T23:00:00Z', groupName: 'Group J' },
-    { id: 'm21', teamA: 'Portugal', teamB: 'Congo DR', matchDate: '2026-06-17T15:00:00Z', groupName: 'Group K' },
-    { id: 'm22', teamA: 'Uzbekistan', teamB: 'Colombia', matchDate: '2026-06-17T18:00:00Z', groupName: 'Group K' },
-    { id: 'm23', teamA: 'England', teamB: 'Croatia', matchDate: '2026-06-17T21:00:00Z', groupName: 'Group L' },
-    { id: 'm24', teamA: 'Ghana', teamB: 'Panama', matchDate: '2026-06-17T23:00:00Z', groupName: 'Group L' }
+    { id: 'm1', teamA: 'Mexico', teamB: 'South Africa', matchDate: '2026-06-12T00:45:00+05:45', groupName: 'Group A' },
+    { id: 'm2', teamA: 'Korea Republic', teamB: 'Czechia', matchDate: '2026-06-12T02:45:00+05:45', groupName: 'Group A' },
+    { id: 'm3', teamA: 'Canada', teamB: 'Bosnia and Herzegovina', matchDate: '2026-06-12T18:45:00+05:45', groupName: 'Group B' },
+    { id: 'm4', teamA: 'USA', teamB: 'Paraguay', matchDate: '2026-06-12T21:45:00+05:45', groupName: 'Group D' },
+    { id: 'm5', teamA: 'Qatar', teamB: 'Switzerland', matchDate: '2026-06-13T18:45:00+05:45', groupName: 'Group B' },
+    { id: 'm6', teamA: 'Brazil', teamB: 'Morocco', matchDate: '2026-06-13T21:45:00+05:45', groupName: 'Group C' },
+    { id: 'm7', teamA: 'Haiti', teamB: 'Scotland', matchDate: '2026-06-14T00:45:00+05:45', groupName: 'Group C' },
+    { id: 'm8', teamA: 'Australia', teamB: 'Türkiye', matchDate: '2026-06-14T02:45:00+05:45', groupName: 'Group D' },
+    { id: 'm9', teamA: 'Germany', teamB: 'Curaçao', matchDate: '2026-06-14T18:45:00+05:45', groupName: 'Group E' },
+    { id: 'm10', teamA: 'Côte d\'Ivoire', teamB: 'Ecuador', matchDate: '2026-06-14T21:45:00+05:45', groupName: 'Group E' },
+    { id: 'm11', teamA: 'Netherlands', teamB: 'Japan', matchDate: '2026-06-15T00:45:00+05:45', groupName: 'Group F' },
+    { id: 'm12', teamA: 'Sweden', teamB: 'Tunisia', matchDate: '2026-06-15T02:45:00+05:45', groupName: 'Group F' },
+    { id: 'm13', teamA: 'Belgium', teamB: 'Egypt', matchDate: '2026-06-15T18:45:00+05:45', groupName: 'Group G' },
+    { id: 'm14', teamA: 'IR Iran', teamB: 'New Zealand', matchDate: '2026-06-15T21:45:00+05:45', groupName: 'Group G' },
+    { id: 'm15', teamA: 'Spain', teamB: 'Cabo Verde', matchDate: '2026-06-16T00:45:00+05:45', groupName: 'Group H' },
+    { id: 'm16', teamA: 'Saudi Arabia', teamB: 'Uruguay', matchDate: '2026-06-16T02:45:00+05:45', groupName: 'Group H' },
+    { id: 'm17', teamA: 'France', teamB: 'Senegal', matchDate: '2026-06-16T18:45:00+05:45', groupName: 'Group I' },
+    { id: 'm18', teamA: 'Iraq', teamB: 'Norway', matchDate: '2026-06-16T21:45:00+05:45', groupName: 'Group I' },
+    { id: 'm19', teamA: 'Argentina', teamB: 'Algeria', matchDate: '2026-06-17T00:45:00+05:45', groupName: 'Group J' },
+    { id: 'm20', teamA: 'Austria', teamB: 'Jordan', matchDate: '2026-06-17T02:45:00+05:45', groupName: 'Group J' },
+    { id: 'm21', teamA: 'Portugal', teamB: 'Congo DR', matchDate: '2026-06-17T18:45:00+05:45', groupName: 'Group K' },
+    { id: 'm22', teamA: 'Uzbekistan', teamB: 'Colombia', matchDate: '2026-06-17T21:45:00+05:45', groupName: 'Group K' },
+    { id: 'm23', teamA: 'England', teamB: 'Croatia', matchDate: '2026-06-18T00:45:00+05:45', groupName: 'Group L' },
+    { id: 'm24', teamA: 'Ghana', teamB: 'Panama', matchDate: '2026-06-18T02:45:00+05:45', groupName: 'Group L' }
   ];
 
   const mockMatches = originalMatches.map(m => ({
@@ -118,7 +118,7 @@ async function seed() {
     'Group L': ['England', 'Croatia', 'Ghana', 'Panama']
   };
 
-  const timeSlots = ['15:00:00Z', '18:00:00Z', '21:00:00Z', '23:00:00Z'];
+  const timeSlots = ['18:45:00+05:45', '21:45:00+05:45', '00:45:00+05:45', '02:45:00+05:45'];
   let currentMatchId = 25;
 
   // Round 2
@@ -130,8 +130,11 @@ async function seed() {
       { a: teams[1], b: teams[3] }
     ];
     pairings.forEach(p => {
-      const day = r2StartDay + Math.floor(r2MatchIndex / 4);
+      let day = r2StartDay + Math.floor(r2MatchIndex / 4);
       const slot = timeSlots[r2MatchIndex % 4];
+      if (slot.startsWith('00:') || slot.startsWith('02:')) {
+        day += 1;
+      }
       const matchDate = `2026-06-${day.toString().padStart(2, '0')}T${slot}`;
 
       mockMatches.push({
@@ -159,8 +162,11 @@ async function seed() {
       { a: teams[1], b: teams[2] }
     ];
     pairings.forEach(p => {
-      const day = r3StartDay + Math.floor(r3MatchIndex / 4);
+      let day = r3StartDay + Math.floor(r3MatchIndex / 4);
       const slot = timeSlots[r3MatchIndex % 4];
+      if (slot.startsWith('00:') || slot.startsWith('02:')) {
+        day += 1;
+      }
       const matchDate = `2026-06-${day.toString().padStart(2, '0')}T${slot}`;
 
       mockMatches.push({

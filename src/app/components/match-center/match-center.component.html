@@ -33,7 +33,7 @@
         <span class="status-badge" [ngClass]="match.status">{{ match.status | uppercase }}</span>
         <span class="group-badge" style="margin-left: 8px;">{{ match.groupName }}</span>
       </div>
-      <span class="match-date">{{ match.matchDate | date:'medium' }}</span>
+      <span class="match-date">{{ match.matchDate | date:'MMM d, h:mm a':'+0545' }}</span>
     </div>
 
     <div class="teams-score">
