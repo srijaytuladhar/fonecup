@@ -175,4 +175,50 @@ export class AdminPanelComponent implements OnInit {
       alert('Data has been reset successfully!');
     }
   }
+
+  async exportBackup() {
+    try {
+      const csvContent = await this.predictionService.exportData();
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `backup_${new Date().toISOString().slice(0, 10)}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err: any) {
+      alert('Error exporting data: ' + err.message);
+    }
+  }
+
+  async importBackup(event: any) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!confirm('Are you sure you want to restore this backup? This will overwrite all current data in the application and cannot be undone.')) {
+      event.target.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (e: any) => {
+      const text = e.target.result;
+      try {
+        await this.predictionService.importData(text);
+        alert('Backup restored successfully!');
+        this.loadUsers();
+        event.target.value = '';
+      } catch (err: any) {
+        alert('Error restoring backup: ' + err.message);
+        event.target.value = '';
+      }
+    };
+    reader.onerror = () => {
+      alert('Failed to read file.');
+      event.target.value = '';
+    };
+    reader.readAsText(file);
+  }
 }

@@ -114,6 +114,20 @@
   </div>
 </div>
 
+<div class="glass-card mt-4">
+  <h3>Backup & Restore</h3>
+  <p class="section-desc">Download a complete CSV backup of all users, matches, and prediction data, or restore a previously saved backup.</p>
+  <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+    <button class="btn btn-primary" (click)="exportBackup()">
+      📥 Export Backup (CSV)
+    </button>
+    <label class="btn btn-secondary" style="cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+      📤 Import Backup (CSV)
+      <input type="file" accept=".csv" (change)="importBackup($event)" style="display: none;">
+    </label>
+  </div>
+</div>
+
 <div class="glass-card mt-4" style="border-color: rgba(239, 68, 68, 0.3);">
   <h3 style="color: var(--danger); border-bottom-color: rgba(239, 68, 68, 0.2);">Danger Zone</h3>
   <p class="section-desc">Reset the entire application back to its default mock data.</p>

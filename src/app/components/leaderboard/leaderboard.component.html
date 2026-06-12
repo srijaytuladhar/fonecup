@@ -35,6 +35,40 @@
   </div>
 </div>
 
+<!-- Olympic Winner Stand Podium -->
+<div class="podium-container" *ngIf="employees.length >= 3">
+  <!-- 2nd Place -->
+  <div class="podium-card second-place">
+    <div class="podium-avatar-container">
+      <span class="podium-badge">🥈</span>
+    </div>
+    <div class="podium-name">{{ employees[1].name }}</div>
+    <div class="podium-earnings">Rs. {{ employees[1].totalEarnings }}</div>
+    <div class="podium-stand silver-stand">2nd</div>
+  </div>
+
+  <!-- 1st Place -->
+  <div class="podium-card first-place">
+    <div class="podium-avatar-container">
+      <div class="crown-icon">👑</div>
+      <span class="podium-badge">🥇</span>
+    </div>
+    <div class="podium-name">{{ employees[0].name }}</div>
+    <div class="podium-earnings">Rs. {{ employees[0].totalEarnings }}</div>
+    <div class="podium-stand gold-stand">1st</div>
+  </div>
+
+  <!-- 3rd Place -->
+  <div class="podium-card third-place">
+    <div class="podium-avatar-container">
+      <span class="podium-badge">🥉</span>
+    </div>
+    <div class="podium-name">{{ employees[2].name }}</div>
+    <div class="podium-earnings">Rs. {{ employees[2].totalEarnings }}</div>
+    <div class="podium-stand bronze-stand">3rd</div>
+  </div>
+</div>
+
 <div class="glass-card table-container">
   <table class="leaderboard-table">
     <thead>

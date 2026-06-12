@@ -471,4 +471,105 @@ export class PredictionService {
 
     await batch.commit();
   }
+
+  async exportData(): Promise<string> {
+    const usersSnap = await getDocs(collection(this.db, 'users'));
+    const matchesSnap = await getDocs(collection(this.db, 'matches'));
+    const predictionsSnap = await getDocs(collection(this.db, 'predictions'));
+
+    const rows: string[] = ['collection,id,data'];
+
+    usersSnap.forEach(docSnap => {
+      const data = docSnap.data();
+      rows.push(`users,${docSnap.id},"${JSON.stringify(data).replace(/"/g, '""')}"`);
+    });
+
+    matchesSnap.forEach(docSnap => {
+      const data = docSnap.data();
+      rows.push(`matches,${docSnap.id},"${JSON.stringify(data).replace(/"/g, '""')}"`);
+    });
+
+    predictionsSnap.forEach(docSnap => {
+      const data = docSnap.data();
+      rows.push(`predictions,${docSnap.id},"${JSON.stringify(data).replace(/"/g, '""')}"`);
+    });
+
+    return rows.join('\n');
+  }
+
+  private async commitInBatches(operations: { type: 'set' | 'delete', collection: string, id: string, data?: any }[]) {
+    let batch = writeBatch(this.db);
+    let count = 0;
+
+    for (const op of operations) {
+      const docRef = doc(this.db, op.collection, op.id);
+      if (op.type === 'delete') {
+        batch.delete(docRef);
+      } else if (op.type === 'set') {
+        batch.set(docRef, op.data);
+      }
+      count++;
+
+      if (count === 400) {
+        await batch.commit();
+        batch = writeBatch(this.db);
+        count = 0;
+      }
+    }
+
+    if (count > 0) {
+      await batch.commit();
+    }
+  }
+
+  async importData(csvText: string): Promise<void> {
+    const lines = csvText.split('\n');
+    const operations: { type: 'set' | 'delete', collection: string, id: string, data?: any }[] = [];
+
+    // 1. Queue deletion of all existing records in the target collections to clear state cleanly
+    const usersSnap = await getDocs(collection(this.db, 'users'));
+    usersSnap.forEach(d => {
+      operations.push({ type: 'delete', collection: 'users', id: d.id });
+    });
+
+    const matchesSnap = await getDocs(collection(this.db, 'matches'));
+    matchesSnap.forEach(d => {
+      operations.push({ type: 'delete', collection: 'matches', id: d.id });
+    });
+
+    const predictionsSnap = await getDocs(collection(this.db, 'predictions'));
+    predictionsSnap.forEach(d => {
+      operations.push({ type: 'delete', collection: 'predictions', id: d.id });
+    });
+
+    // 2. Parse CSV lines and queue set operations
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+
+      const firstComma = line.indexOf(',');
+      const secondComma = line.indexOf(',', firstComma + 1);
+      if (firstComma === -1 || secondComma === -1) continue;
+
+      const collectionName = line.substring(0, firstComma);
+      const docId = line.substring(firstComma + 1, secondComma);
+      let dataStr = line.substring(secondComma + 1);
+
+      if (dataStr.startsWith('"') && dataStr.endsWith('"')) {
+        dataStr = dataStr.slice(1, -1);
+      }
+      dataStr = dataStr.replace(/""/g, '"');
+
+      try {
+        const data = JSON.parse(dataStr);
+        operations.push({ type: 'set', collection: collectionName, id: docId, data });
+      } catch (e) {
+        console.error('Error parsing line:', line, e);
+      }
+    }
+
+    // 3. Execute all queued delete and set operations in batches of 400
+    await this.commitInBatches(operations);
+  }
 }
+
