@@ -22,6 +22,7 @@ export class MatchCenterComponent implements OnInit {
   selectedUserId: string = '';
   currentUserName: string = '';
   tempPredictions: { [matchId: string]: { scoreA: number, scoreB: number } } = {};
+  saveFeedback: { [matchId: string]: boolean } = {};
 
   constructor(private predictionService: PredictionService, private authService: AuthenticationService, private router: Router) {}
 
@@ -80,16 +81,17 @@ export class MatchCenterComponent implements OnInit {
     });
   }
 
-  adjustScore(matchId: string, team: 'scoreA' | 'scoreB', amount: number) {
+  async adjustScore(matchId: string, team: 'scoreA' | 'scoreB', amount: number) {
     if (!this.tempPredictions[matchId]) return;
     const current = this.tempPredictions[matchId][team];
     const updated = current + amount;
     if (updated >= 0) {
       this.tempPredictions[matchId][team] = updated;
+      await this.saveAutoPrediction(matchId);
     }
   }
 
-  savePrediction(matchId: string) {
+  async saveAutoPrediction(matchId: string) {
     if (!this.authService.isLoggedIn()) {
       alert('Please log in before submitting predictions.');
       this.router.navigate(['/login']);
@@ -97,11 +99,32 @@ export class MatchCenterComponent implements OnInit {
     }
     if (!this.selectedUserId) return;
     const scores = this.tempPredictions[matchId];
-    this.predictionService.savePrediction(this.selectedUserId, matchId, scores.scoreA, scores.scoreB);
-    alert('Prediction saved!');
+    try {
+      await this.predictionService.savePrediction(this.selectedUserId, matchId, scores.scoreA, scores.scoreB);
+    } catch (err: any) {
+      alert('Error saving prediction: ' + err.message);
+    }
+  }
+
+  async setPredictionToZero(matchId: string) {
+    if (!this.tempPredictions[matchId]) return;
+    this.tempPredictions[matchId].scoreA = 0;
+    this.tempPredictions[matchId].scoreB = 0;
+    await this.saveAutoPrediction(matchId);
+    
+    // Show visual indicator feedback for 1.5 seconds
+    this.saveFeedback[matchId] = true;
+    setTimeout(() => {
+      this.saveFeedback[matchId] = false;
+    }, 1500);
   }
 
   getPredictionForMatch(matchId: string, userId: string) {
     return this.predictions.find(p => p.matchId === matchId && p.userId === userId);
+  }
+
+  isPredictionZeroZero(matchId: string): boolean {
+    const pred = this.getPredictionForMatch(matchId, this.selectedUserId);
+    return !!pred && pred.predictedScoreA === 0 && pred.predictedScoreB === 0;
   }
 }

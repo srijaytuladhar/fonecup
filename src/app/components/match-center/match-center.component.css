@@ -277,3 +277,18 @@
     margin: 0 8px;
   }
 }
+
+.btn-success-indicator {
+  background: rgba(16, 185, 129, 0.2) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(16, 185, 129, 0.4) !important;
+  pointer-events: none;
+}
+
+.match-card.no-prediction {
+  border-bottom: 3px solid rgba(148, 163, 184, 0.4) !important;
+}
+
+.match-card.has-prediction {
+  border-bottom: 3px solid rgba(16, 185, 129, 0.85) !important;
+}
