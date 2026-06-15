@@ -97,6 +97,27 @@ export class AuthenticationService {
     }
   }
 
+  /** Admin can delete a user and their predictions */
+  async deleteUser(userId: string): Promise<void> {
+    if (!this.isAdmin()) {
+      throw new Error('Only admin can delete users');
+    }
+    
+    const batch = writeBatch(this.db);
+    
+    // 1. Delete user document
+    batch.delete(doc(this.db, 'users', userId));
+    
+    // 2. Delete predictions associated with this user
+    const predictionsQuery = query(collection(this.db, 'predictions'), where('userId', '==', userId));
+    const predictionsSnap = await getDocs(predictionsQuery);
+    predictionsSnap.forEach(d => {
+      batch.delete(d.ref);
+    });
+    
+    await batch.commit();
+  }
+
 
   /** Generate a username from first name (lower‑cased) */
   private generateUsername(firstName: string): string {

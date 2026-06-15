@@ -189,8 +189,12 @@
             </span>
           </td>
           <td>
-            <button class="btn btn-secondary" style="padding: 4px 12px; font-size: 0.85rem;"
-              (click)="startEdit(user)">Edit</button>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-secondary" style="padding: 4px 12px; font-size: 0.85rem;"
+                (click)="startEdit(user)">Edit</button>
+              <button class="btn btn-secondary" style="padding: 4px 12px; font-size: 0.85rem; background: var(--danger); border-color: var(--danger); color: white;"
+                (click)="deleteUser(user.id)">Delete</button>
+            </div>
           </td>
         </ng-container>
         <ng-container *ngIf="editingUserId === user.id">

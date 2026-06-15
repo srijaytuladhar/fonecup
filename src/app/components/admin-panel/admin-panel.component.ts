@@ -107,6 +107,22 @@ export class AdminPanelComponent implements OnInit {
     }
   }
 
+  async deleteUser(userId: string) {
+    if (userId === this.authService.getCurrentUser()?.id) {
+      this.toastService.error('You cannot delete your own admin account.');
+      return;
+    }
+    if (confirm('Are you sure you want to delete this user? All their predictions will also be deleted.')) {
+      try {
+        await this.authService.deleteUser(userId);
+        this.toastService.success('User deleted successfully!');
+        this.loadUsers();
+      } catch (err: any) {
+        this.toastService.error('Error deleting user: ' + err.message);
+      }
+    }
+  }
+
   async addEmployee() {
     if (this.newEmployeeName.trim()) {
       await this.predictionService.addUser(this.newEmployeeName.trim());
