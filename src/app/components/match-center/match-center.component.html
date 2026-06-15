@@ -67,6 +67,15 @@
       </div>
     </div>
 
+    <!-- Watch Live Button for Today & Tomorrow Matches -->
+    <div *ngIf="isLiveWindow(match.matchDate)" 
+         style="margin-top: -8px; margin-bottom: 16px; display: flex; justify-content: center; width: 100%;">
+      <a href="https://helytv.com/" target="_blank" class="btn btn-primary"
+         style="width: 100%; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #ef4444, #b91c1c); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35); text-decoration: none; border: none; height: 38px; border-radius: 8px;">
+        🔴 Watch Live
+      </a>
+    </div>
+
     <div class="prediction-section" *ngIf="match.status === 'scheduled'">
       <ng-container *ngIf="!isMatchBlocked(match); else matchBlocked">
         <div *ngIf="isPredictionZeroZero(match.id)"

@@ -156,6 +156,18 @@ export class MatchCenterComponent implements OnInit {
     return null;
   }
 
+  isLiveWindow(matchDateString: string): boolean {
+    if (!matchDateString) return false;
+    const matchDate = new Date(matchDateString);
+    if (isNaN(matchDate.getTime())) return false;
+
+    const currentTime = new Date().getTime();
+    const oneHourBefore = matchDate.getTime() - (60 * 60 * 1000);
+    const twoHoursAfter = matchDate.getTime() + (2 * 60 * 60 * 1000);
+
+    return currentTime >= oneHourBefore && currentTime <= twoHoursAfter;
+  }
+
   isMatchBlocked(match: Match): boolean {
     if (!match) return false;
     return !!match.isBlocked || (new Date().getTime() >= new Date(match.matchDate).getTime());
