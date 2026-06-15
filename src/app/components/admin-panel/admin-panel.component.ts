@@ -123,6 +123,15 @@ export class AdminPanelComponent implements OnInit {
     }
   }
 
+  async adjustPrediction(userId: string, matchId: string, scoreA: number, scoreB: number) {
+    try {
+      await this.predictionService.adminAdjustPrediction(userId, matchId, scoreA, scoreB);
+      this.toastService.success('Prediction adjusted successfully!');
+    } catch (err: any) {
+      this.toastService.error('Error adjusting prediction: ' + err.message);
+    }
+  }
+
   async addEmployee() {
     if (this.newEmployeeName.trim()) {
       await this.predictionService.addUser(this.newEmployeeName.trim());

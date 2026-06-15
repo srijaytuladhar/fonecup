@@ -111,10 +111,13 @@
         <div class="status-group">
           <span class="group-title predicted-title">Predicted ({{ getPredictionStatus(match.id).predicted.length }})</span>
           <div class="user-badge-list">
-            <span class="user-badge predicted-badge" *ngFor="let user of getPredictionStatus(match.id).predicted">
-              {{ user.name }}
-              <span class="predicted-score-sub" *ngIf="getUserPredictionScore(match.id, user.id) as score">
-                {{ score.scoreA }} - {{ score.scoreB }}
+            <span class="user-badge predicted-badge" *ngFor="let user of getPredictionStatus(match.id).predicted" style="display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span>{{ user.name }}</span>
+              <span class="predicted-score-sub" *ngIf="getUserPredictionScore(match.id, user.id) as score" style="display: inline-flex; align-items: center; gap: 4px;">
+                <input type="number" #predA [value]="score.scoreA" min="0" style="width: 32px; height: 22px; font-size: 0.75rem; text-align: center; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); color: white; border-radius: 4px; padding: 0;">
+                <span style="font-size: 0.75rem;">-</span>
+                <input type="number" #predB [value]="score.scoreB" min="0" style="width: 32px; height: 22px; font-size: 0.75rem; text-align: center; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); color: white; border-radius: 4px; padding: 0;">
+                <button (click)="adjustPrediction(user.id, match.id, +predA.value, +predB.value)" style="background: #f59e0b; border: none; border-radius: 4px; color: black; font-size: 0.65rem; padding: 2px 6px; cursor: pointer; font-weight: 600; line-height: 1.2;">Adjust</button>
               </span>
             </span>
             <span class="empty-badge-text" *ngIf="getPredictionStatus(match.id).predicted.length === 0">No users have predicted yet.</span>
@@ -123,8 +126,14 @@
         <div class="status-group" style="margin-top: 10px;">
           <span class="group-title not-predicted-title">Not Predicted ({{ getPredictionStatus(match.id).notPredicted.length }})</span>
           <div class="user-badge-list">
-            <span class="user-badge not-predicted-badge" *ngFor="let user of getPredictionStatus(match.id).notPredicted">
-              {{ user.name }}
+            <span class="user-badge not-predicted-badge" *ngFor="let user of getPredictionStatus(match.id).notPredicted" style="display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span>{{ user.name }}</span>
+              <span style="display: inline-flex; align-items: center; gap: 4px;">
+                <input type="number" #newPredA value="0" min="0" style="width: 32px; height: 22px; font-size: 0.75rem; text-align: center; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); color: white; border-radius: 4px; padding: 0;">
+                <span style="font-size: 0.75rem;">-</span>
+                <input type="number" #newPredB value="0" min="0" style="width: 32px; height: 22px; font-size: 0.75rem; text-align: center; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); color: white; border-radius: 4px; padding: 0;">
+                <button (click)="adjustPrediction(user.id, match.id, +newPredA.value, +newPredB.value)" style="background: #10b981; border: none; border-radius: 4px; color: white; font-size: 0.65rem; padding: 2px 6px; cursor: pointer; font-weight: 600; line-height: 1.2;">Save</button>
+              </span>
             </span>
             <span class="empty-badge-text" *ngIf="getPredictionStatus(match.id).notPredicted.length === 0">All users have predicted!</span>
           </div>
