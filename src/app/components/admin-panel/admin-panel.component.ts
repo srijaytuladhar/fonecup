@@ -142,7 +142,7 @@ export class AdminPanelComponent implements OnInit {
   }
 
   getParticipantsCount(): number {
-    return this.users.filter(u => !u.isAdmin).length;
+    return this.users.length;
   }
 
   getPredictionCount(matchId: string): number {
@@ -161,7 +161,7 @@ export class AdminPanelComponent implements OnInit {
   getPredictionStatus(matchId: string) {
     const predicted: AuthUser[] = [];
     const notPredicted: AuthUser[] = [];
-    const participants = this.users.filter(u => !u.isAdmin);
+    const participants = this.users;
     participants.forEach(user => {
       const hasPred = this.allPredictions.some(p => p.matchId === matchId && p.userId === user.id);
       if (hasPred) {
