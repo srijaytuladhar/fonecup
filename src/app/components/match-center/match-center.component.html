@@ -103,11 +103,26 @@
         </button>
       </ng-container>
       <ng-template #matchBlocked>
-        <div class="blocked-prediction-container">
+        <div class="blocked-prediction-container" style="width: 100%;">
           <span class="lock-icon">🔒</span>
           <span class="blocked-text">Predictions are locked for this match</span>
           <div class="locked-prediction-value" *ngIf="getPredictionForMatch(match.id, selectedUserId) as pred">
             Your Prediction: <strong>{{ pred.predictedScoreA }} - {{ pred.predictedScoreB }}</strong>
+          </div>
+          
+          <div class="results-section" style="border-top: 1px solid var(--glass-border); padding-top: 12px; margin-top: 12px; width: 100%; text-align: left;">
+            <h4 style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 12px;">Employee Predictions</h4>
+            <div class="prediction-list">
+              <div class="prediction-item" *ngFor="let emp of employees">
+                <span class="emp-name">{{ emp.name }}</span>
+                <ng-container *ngIf="getPredictionForMatch(match.id, emp.id) as pred; else noPred">
+                  <span class="pred-score" style="font-weight: 600;">{{ pred.predictedScoreA }} - {{ pred.predictedScoreB }}</span>
+                </ng-container>
+                <ng-template #noPred>
+                  <span class="no-pred" style="color: var(--text-secondary); font-style: italic;">No prediction</span>
+                </ng-template>
+              </div>
+            </div>
           </div>
         </div>
       </ng-template>
