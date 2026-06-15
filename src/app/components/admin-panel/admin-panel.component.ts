@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PredictionService, Match, Prediction } from '../../services/prediction.service';
 import { AuthenticationService, AuthUser } from '../../services/authentication.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-admin-panel',
@@ -30,7 +31,14 @@ export class AdminPanelComponent implements OnInit {
   editingPassword: string = '';
   editingIsPaid: boolean = false;
 
-  constructor(private predictionService: PredictionService, public authService: AuthenticationService) {}
+  editingMatchId: string | null = null;
+  editingMatchDate: string = '';
+
+  constructor(
+    private predictionService: PredictionService, 
+    public authService: AuthenticationService,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit() {
     this.predictionService.matches$.subscribe(matches => {
@@ -67,7 +75,7 @@ export class AdminPanelComponent implements OnInit {
 
   async saveUserEdit(userId: string) {
     if (!this.editingName.trim() || !this.editingUsername.trim() || !this.editingPassword.trim()) {
-      alert('All fields are required.');
+      this.toastService.error('All fields are required.');
       return;
     }
     try {
@@ -78,10 +86,10 @@ export class AdminPanelComponent implements OnInit {
         isPaid: this.editingIsPaid
       });
       this.editingUserId = null;
-      alert('User credentials updated successfully!');
+      this.toastService.success('User credentials updated successfully!');
       this.loadUsers();
     } catch (err: any) {
-      alert('Error updating user: ' + err.message);
+      this.toastService.error('Error updating user: ' + err.message);
     }
   }
 
@@ -92,9 +100,10 @@ export class AdminPanelComponent implements OnInit {
         isPaid: newPaid
       });
       user.isPaid = newPaid;
+      this.toastService.success(`User marked as ${newPaid ? 'Paid' : 'Unpaid'}!`);
       this.loadUsers();
     } catch (err: any) {
-      alert('Error updating paid status: ' + err.message);
+      this.toastService.error('Error updating paid status: ' + err.message);
     }
   }
 
@@ -102,7 +111,7 @@ export class AdminPanelComponent implements OnInit {
     if (this.newEmployeeName.trim()) {
       await this.predictionService.addUser(this.newEmployeeName.trim());
       this.newEmployeeName = '';
-      alert('Employee added!');
+      this.toastService.success('Employee added successfully!');
       this.loadUsers();
     }
   }
@@ -146,7 +155,7 @@ export class AdminPanelComponent implements OnInit {
       this.newMatchTeamB = '';
       this.newMatchDate = '';
       this.newMatchGroupName = '';
-      alert('Match added!');
+      this.toastService.success('Match created successfully!');
     }
   }
 
@@ -154,25 +163,67 @@ export class AdminPanelComponent implements OnInit {
     const nextStatus = !currentStatus;
     this.predictionService.toggleMatchBlock(matchId, nextStatus)
       .then(() => {
-        alert(`Match predictions ${nextStatus ? 'blocked' : 'unblocked'} successfully!`);
+        this.toastService.success(`Match predictions ${nextStatus ? 'blocked' : 'unblocked'} successfully!`);
       })
       .catch(err => {
-        alert('Error updating block status: ' + err.message);
+        this.toastService.error('Error updating block status: ' + err.message);
       });
   }
+
+  startEditMatchDate(match: Match) {
+    this.editingMatchId = match.id;
+    if (match.matchDate) {
+      this.editingMatchDate = match.matchDate.substring(0, 16);
+    } else {
+      this.editingMatchDate = '';
+    }
+  }
+
+  cancelEditMatchDate() {
+    this.editingMatchId = null;
+  }
+
+  async saveMatchDate(matchId: string) {
+    if (!this.editingMatchDate) {
+      this.toastService.error('Match date is required.');
+      return;
+    }
+    try {
+      await this.predictionService.updateMatchDate(matchId, this.editingMatchDate);
+      this.editingMatchId = null;
+      this.toastService.success('Match date updated successfully!');
+    } catch (err: any) {
+      this.toastService.error('Error updating match date: ' + err.message);
+    }
+  }
+
+  adjustEditingMatchDate(offsetMinutes: number) {
+    if (!this.editingMatchDate) return;
+    const date = new Date(this.editingMatchDate);
+    if (!isNaN(date.getTime())) {
+      date.setMinutes(date.getMinutes() + offsetMinutes);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      this.editingMatchDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+  }
+
 
   resolveMatch(matchId: string) {
     const scores = this.finalScores[matchId];
     if (scores.scoreA >= 0 && scores.scoreB >= 0) {
       this.predictionService.resolveMatch(matchId, scores.scoreA, scores.scoreB);
-      alert('Match resolved and points calculated!');
+      this.toastService.success('Match resolved and points calculated!');
     }
   }
 
   resetAllData() {
     if (confirm('Are you sure you want to reset all data to default mock data? This cannot be undone.')) {
       this.predictionService.resetData();
-      alert('Data has been reset successfully!');
+      this.toastService.success('Data has been reset successfully!');
     }
   }
 
@@ -189,7 +240,7 @@ export class AdminPanelComponent implements OnInit {
       link.click();
       document.body.removeChild(link);
     } catch (err: any) {
-      alert('Error exporting data: ' + err.message);
+      this.toastService.error('Error exporting data: ' + err.message);
     }
   }
 
@@ -207,16 +258,16 @@ export class AdminPanelComponent implements OnInit {
       const text = e.target.result;
       try {
         await this.predictionService.importData(text);
-        alert('Backup restored successfully!');
+        this.toastService.success('Backup restored successfully!');
         this.loadUsers();
         event.target.value = '';
       } catch (err: any) {
-        alert('Error restoring backup: ' + err.message);
+        this.toastService.error('Error restoring backup: ' + err.message);
         event.target.value = '';
       }
     };
     reader.onerror = () => {
-      alert('Failed to read file.');
+      this.toastService.error('Failed to read file.');
       event.target.value = '';
     };
     reader.readAsText(file);

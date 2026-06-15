@@ -64,7 +64,31 @@
               {{ match.teamB }}
             </strong>
           </div>
-          <span class="match-date">{{ match.matchDate | date:'MMM d, y, h:mm a':'+0545' }}</span>
+          <div *ngIf="editingMatchId !== match.id" style="display: flex; align-items: center; gap: 8px;">
+            <span class="match-date">{{ match.matchDate | date:'MMM d, y, h:mm a':'+0545' }}</span>
+            <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.7rem; line-height: 1; min-height: auto; height: auto; background: rgba(255, 255, 255, 0.05);" (click)="startEditMatchDate(match)">✏️ Edit Date</button>
+          </div>
+          <div *ngIf="editingMatchId === match.id" style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px; padding: 10px; background: rgba(255, 255, 255, 0.03); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08); width: 100%; max-width: 380px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <input type="datetime-local" class="input-field" [(ngModel)]="editingMatchDate" style="margin: 0; padding: 4px 8px; height: 32px; font-size: 0.85rem; flex-grow: 1; min-width: 150px;">
+              <button class="btn btn-primary" style="padding: 4px 12px; font-size: 0.75rem; height: 32px; min-height: auto; font-weight: 600;" (click)="saveMatchDate(match.id)">Save</button>
+              <button class="btn btn-secondary" style="padding: 4px 12px; font-size: 0.75rem; height: 32px; min-height: auto; background: var(--danger); font-weight: 600;" (click)="cancelEditMatchDate()">Cancel</button>
+            </div>
+            
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 8px;">
+              <div style="display: flex; gap: 4px;">
+                <button type="button" class="btn btn-secondary" style="padding: 2px 8px; font-size: 0.7rem; height: 24px; min-height: auto; line-height: 1; background: rgba(255, 255, 255, 0.05);" (click)="adjustEditingMatchDate(-1440)">-1d</button>
+                <button type="button" class="btn btn-secondary" style="padding: 2px 8px; font-size: 0.7rem; height: 24px; min-height: auto; line-height: 1; background: rgba(255, 255, 255, 0.05);" (click)="adjustEditingMatchDate(-60)">-1h</button>
+                <button type="button" class="btn btn-secondary" style="padding: 2px 8px; font-size: 0.7rem; height: 24px; min-height: auto; line-height: 1; background: rgba(255, 255, 255, 0.05);" (click)="adjustEditingMatchDate(-15)">-15m</button>
+              </div>
+              <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Adjust</span>
+              <div style="display: flex; gap: 4px;">
+                <button type="button" class="btn btn-secondary" style="padding: 2px 8px; font-size: 0.7rem; height: 24px; min-height: auto; line-height: 1; background: rgba(255, 255, 255, 0.05);" (click)="adjustEditingMatchDate(15)">+15m</button>
+                <button type="button" class="btn btn-secondary" style="padding: 2px 8px; font-size: 0.7rem; height: 24px; min-height: auto; line-height: 1; background: rgba(255, 255, 255, 0.05);" (click)="adjustEditingMatchDate(60)">+1h</button>
+                <button type="button" class="btn btn-secondary" style="padding: 2px 8px; font-size: 0.7rem; height: 24px; min-height: auto; line-height: 1; background: rgba(255, 255, 255, 0.05);" (click)="adjustEditingMatchDate(1440)">+1d</button>
+              </div>
+            </div>
+          </div>
           
           <button 
             (click)="togglePredictionStatus(match.id)" 

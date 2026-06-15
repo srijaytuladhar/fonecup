@@ -361,6 +361,15 @@ export class PredictionService {
     await updateDoc(matchRef, { isBlocked });
   }
 
+  async updateMatchDate(matchId: string, matchDate: string) {
+    let normalizedDate = matchDate;
+    if (normalizedDate && !normalizedDate.includes('+') && !normalizedDate.includes('-') && !normalizedDate.endsWith('Z')) {
+      normalizedDate = normalizedDate + '+05:45';
+    }
+    const matchRef = doc(this.db, 'matches', matchId);
+    await updateDoc(matchRef, { matchDate: normalizedDate });
+  }
+
   updateRules(rules: PoolRules) {
     this.rulesSubject.next(rules);
     this.recalculateAllPoints();

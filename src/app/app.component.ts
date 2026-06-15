@@ -3,6 +3,7 @@ import { Router, NavigationEnd, RouterOutlet, RouterLink, RouterLinkActive } fro
 import { CommonModule } from '@angular/common';
 import { AuthenticationService } from './services/authentication.service';
 import { PredictionService } from './services/prediction.service';
+import { ToastService } from './services/toast.service';
 
 @Component({
   selector: 'app-root',
@@ -39,7 +40,8 @@ export class AppComponent {
   constructor(
     public router: Router, 
     private authService: AuthenticationService,
-    private predictionService: PredictionService
+    private predictionService: PredictionService,
+    public toastService: ToastService
   ) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -144,19 +146,20 @@ export class AppComponent {
 
   async saveChampionSelection() {
     if (!this.selectedChampion) {
-      alert('Please select a country!');
+      this.toastService.error('Please select a country!');
       return;
     }
     if (!this.currentUser) {
-      alert('Please login first!');
+      this.toastService.error('Please login first!');
       return;
     }
     try {
       await this.authService.saveChampionPrediction(this.currentUser.id, this.selectedChampion);
+      this.toastService.success('Champion prediction saved successfully!');
       this.closeChampionModal();
     } catch (err) {
       console.error(err);
-      alert('Failed to save champion prediction.');
+      this.toastService.error('Failed to save champion prediction.');
     }
   }
 

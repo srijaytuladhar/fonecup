@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PredictionService, Match, Employee, Prediction } from '../../services/prediction.service';
 import { AuthenticationService } from '../../services/authentication.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-match-center',
@@ -16,7 +17,7 @@ export class MatchCenterComponent implements OnInit {
   matches: Match[] = [];
   employees: Employee[] = [];
   predictions: Prediction[] = [];
-  filter: 'all' | 'scheduled' | 'completed' = 'all';
+  filter: 'all' | 'scheduled' | 'completed' = 'scheduled';
   selectedGroup: string = 'all';
   
   selectedUserId: string = '';
@@ -24,7 +25,12 @@ export class MatchCenterComponent implements OnInit {
   tempPredictions: { [matchId: string]: { scoreA: number, scoreB: number } } = {};
   saveFeedback: { [matchId: string]: boolean } = {};
 
-  constructor(private predictionService: PredictionService, private authService: AuthenticationService, private router: Router) {}
+  constructor(
+    private predictionService: PredictionService, 
+    private authService: AuthenticationService, 
+    private router: Router,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit() {
     this.predictionService.matches$.subscribe(m => this.matches = m);
@@ -93,7 +99,7 @@ export class MatchCenterComponent implements OnInit {
 
   async saveAutoPrediction(matchId: string) {
     if (!this.authService.isLoggedIn()) {
-      alert('Please log in before submitting predictions.');
+      this.toastService.error('Please log in before submitting predictions.');
       this.router.navigate(['/login']);
       return;
     }
@@ -102,7 +108,7 @@ export class MatchCenterComponent implements OnInit {
     try {
       await this.predictionService.savePrediction(this.selectedUserId, matchId, scores.scoreA, scores.scoreB);
     } catch (err: any) {
-      alert('Error saving prediction: ' + err.message);
+      this.toastService.error('Error saving prediction: ' + err.message);
     }
   }
 
