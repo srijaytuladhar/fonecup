@@ -133,4 +133,31 @@ export class MatchCenterComponent implements OnInit {
     const pred = this.getPredictionForMatch(matchId, this.selectedUserId);
     return !!pred && pred.predictedScoreA === 0 && pred.predictedScoreB === 0;
   }
+
+  getDateLabel(matchDateString: string): 'today' | 'tomorrow' | null {
+    if (!matchDateString) return null;
+    const matchDate = new Date(matchDateString);
+    if (isNaN(matchDate.getTime())) return null;
+
+    const today = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+
+    const isSameDay = (d1: Date, d2: Date) => 
+      d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
+
+    if (isSameDay(matchDate, today)) {
+      return 'today';
+    } else if (isSameDay(matchDate, tomorrow)) {
+      return 'tomorrow';
+    }
+    return null;
+  }
+
+  isMatchBlocked(match: Match): boolean {
+    if (!match) return false;
+    return !!match.isBlocked || (new Date().getTime() >= new Date(match.matchDate).getTime());
+  }
 }

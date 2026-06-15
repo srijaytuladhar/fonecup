@@ -28,6 +28,14 @@
   <div class="match-card glass-card" [class.no-prediction]="!getPredictionForMatch(match.id, selectedUserId)"
     [class.has-prediction]="getPredictionForMatch(match.id, selectedUserId)" *ngFor="let match of filteredMatches">
 
+    <!-- Day Badge at the top row of the card -->
+    <div *ngIf="getDateLabel(match.matchDate) as label" style="margin-bottom: 12px;">
+      <div style="display: flex; justify-content: center; margin-bottom: 10px;">
+        <span class="day-badge" [ngClass]="label">{{ label | uppercase }}</span>
+      </div>
+      <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 0;">
+    </div>
+
     <div class="match-header">
       <div>
         <span class="status-badge" [ngClass]="match.status">{{ match.status | uppercase }}</span>
@@ -60,7 +68,7 @@
     </div>
 
     <div class="prediction-section" *ngIf="match.status === 'scheduled'">
-      <ng-container *ngIf="!match.isBlocked; else matchBlocked">
+      <ng-container *ngIf="!isMatchBlocked(match); else matchBlocked">
         <div *ngIf="isPredictionZeroZero(match.id)"
           style="text-align: center; font-size: 0.85rem; color: var(--success); font-weight: 600; margin-bottom: 8px;">
           <!-- 0-0 prediction is set -->

@@ -337,7 +337,8 @@ export class PredictionService {
   async savePrediction(userId: string, matchId: string, scoreA: number, scoreB: number) {
     const matches = this.getMatches();
     const match = matches.find(m => m.id === matchId);
-    if (match?.isBlocked) {
+    const hasMatchStarted = match && (new Date().getTime() >= new Date(match.matchDate).getTime());
+    if (match?.isBlocked || hasMatchStarted) {
       throw new Error('Predictions are blocked for this match.');
     }
 

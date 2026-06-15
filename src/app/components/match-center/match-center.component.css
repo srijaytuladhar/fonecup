@@ -292,3 +292,18 @@
 .match-card.has-prediction {
   border-bottom: 3px solid rgba(16, 185, 129, 0.85) !important;
 }
+
+.day-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+.day-badge.today {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+.day-badge.tomorrow {
+  background: rgba(139, 92, 246, 0.2);
+  color: #a78bfa;
+}
