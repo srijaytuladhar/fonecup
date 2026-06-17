@@ -94,12 +94,20 @@ export class AppComponent {
       this.playNextSong();
     });
 
+    let hasToasted = false;
+    const showSongToast = () => {
+      if (!hasToasted) {
+        hasToasted = true;
+        this.toastService.info(`🎵 Now Playing: ${song.name}`, 8000);
+      }
+    };
+
     const tryPlay = () => {
       if (this.currentUser && this.audio && !this.isPlaying) {
         this.audio.play()
           .then(() => {
             this.isPlaying = true;
-            this.toastService.info(`🎵 Now Playing: ${song.name}`);
+            showSongToast();
             removeListeners();
           })
           .catch(e => console.log("Play failed on interaction:", e));
@@ -122,7 +130,7 @@ export class AppComponent {
     this.audio.play()
       .then(() => {
         this.isPlaying = true;
-        this.toastService.info(`🎵 Now Playing: ${song.name}`);
+        showSongToast();
       })
       .catch(err => {
         console.log("Autoplay blocked, waiting for user gesture:", err);
