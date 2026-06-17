@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { initializeApp } from 'firebase/app';
-import { 
-  getFirestore, 
-  collection, 
-  doc, 
-  getDocs, 
-  setDoc, 
-  updateDoc, 
-  onSnapshot, 
-  writeBatch 
+import {
+  getFirestore,
+  collection,
+  doc,
+  getDocs,
+  setDoc,
+  updateDoc,
+  onSnapshot,
+  writeBatch
 } from 'firebase/firestore';
 import { firebaseConfig } from '../../environments/firebase-config';
 
@@ -83,7 +83,7 @@ export class PredictionService {
         users.push(docSnap.data() as Employee);
       });
       if (users.length === 0) {
-        this.seedMockUsers();
+        // this.seedMockUsers();   // TODO: check for bug
       } else {
         this.usersSubject.next(users);
       }
@@ -95,7 +95,7 @@ export class PredictionService {
         matches.push(docSnap.data() as Match);
       });
       if (matches.length === 0) {
-        this.seedMockMatches();
+        // this.seedMockMatches();  // TODO: check for bug
       } else {
         matches.sort((a, b) => new Date(a.matchDate).getTime() - new Date(b.matchDate).getTime());
         this.matchesSubject.next(matches);
@@ -409,17 +409,17 @@ export class PredictionService {
     for (const match of matches) {
       const matchPredictions = predictions.filter(p => p.matchId === match.id);
       const actualDiff = match.actualScoreA! - match.actualScoreB!;
-      
+
       const successfulOutcomePreds = matchPredictions.filter(pred => {
         const predDiff = pred.predictedScoreA - pred.predictedScoreB;
-        return (actualDiff > 0 && predDiff > 0) || 
-               (actualDiff < 0 && predDiff < 0) || 
-               (actualDiff === 0 && predDiff === 0);
+        return (actualDiff > 0 && predDiff > 0) ||
+          (actualDiff < 0 && predDiff < 0) ||
+          (actualDiff === 0 && predDiff === 0);
       });
 
       const successfulExactPreds = matchPredictions.filter(pred => {
-        return pred.predictedScoreA === match.actualScoreA && 
-               pred.predictedScoreB === match.actualScoreB;
+        return pred.predictedScoreA === match.actualScoreA &&
+          pred.predictedScoreB === match.actualScoreB;
       });
 
       const N_outcome = successfulOutcomePreds.length;
@@ -452,7 +452,7 @@ export class PredictionService {
     });
 
     const batch = writeBatch(this.db);
-    
+
     predictions.forEach(pred => {
       batch.set(doc(this.db, 'predictions', pred.id), pred);
     });

@@ -21,14 +21,17 @@
         <span class="btn-text">{{ currentUser?.championPrediction ? currentUser.championPrediction : 'Predict Champion' }}</span>
       </button>
 
-      <button *ngIf="currentUser" (click)="toggleAudio()" class="audio-control-btn" [class.playing]="isPlaying">
+      <button *ngIf="currentUser" (click)="toggleAudio()" class="audio-control-btn" [class.playing]="isPlaying" [title]="isPlaying ? 'Pause: ' + songs[currentSongIndex].name : 'Play: ' + songs[currentSongIndex].name">
         <span class="audio-wave" *ngIf="isPlaying">
           <span></span>
           <span></span>
           <span></span>
         </span>
         <span class="music-icon">{{ isPlaying ? '🔊' : '🔇' }}</span>
-        <span class="btn-text">Wavin' Flag</span>
+      </button>
+
+      <button *ngIf="currentUser" (click)="playNextSong()" class="audio-control-btn" title="Next Song">
+        <span class="music-icon">⏭️</span>
       </button>
 
       <button (click)="logout()" class="btn btn-logout-desktop">Logout</button>

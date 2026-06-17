@@ -37,8 +37,17 @@ export class AppComponent {
     'Group L': ['England', 'Croatia', 'Ghana', 'Panama']
   };
 
+  songs = [
+    { name: "Wavin' Flag", src: 'https://archive.org/download/2010-various-artists-the-dome-summer-2010/03.%20K%27naan%20-%20Wavin%27%20flag.mp3' },
+    { name: "The Cup of Life", src: '/Ricky%20Martin%20-%20The%20Cup%20of%20Life.mp3' },
+    { name: "Waka Waka", src: 'https://archive.org/download/waka-waka/Waka%20Waka.mp3' },
+    { name: "Dai Dai", src: 'https://archive.org/download/2010-various-artists-the-dome-summer-2010/05.%20Velile%20%26%20Safri%20Duo%20-%20Helele.mp3' },
+    { name: "We Are the Champions", src: '/queen-we-are-the-champions-lyrics_NRwtZcI6.mp3' }
+  ];
+  currentSongIndex = 0;
+
   constructor(
-    public router: Router, 
+    public router: Router,
     private authService: AuthenticationService,
     private predictionService: PredictionService,
     public toastService: ToastService
@@ -53,7 +62,8 @@ export class AppComponent {
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
       if (user && !previousUser) {
-        this.playWavinFlag();
+        this.currentSongIndex = Math.floor(Math.random() * this.songs.length);
+        this.playCurrentSong();
       } else if (!user && this.audio) {
         this.audio.pause();
         this.isPlaying = false;
@@ -62,19 +72,34 @@ export class AppComponent {
     });
   }
 
-  playWavinFlag() {
-    if (!this.audio) {
-      this.audio = new Audio('https://archive.org/download/2010-various-artists-the-dome-summer-2010/03.%20K%27naan%20-%20Wavin%27%20flag.mp3');
-      this.audio.volume = 0.35;
-      this.audio.loop = true;
-      this.audio.preload = 'auto';
+  playCurrentSong() {
+    if (this.audio) {
+      this.audio.pause();
+      this.audio.src = '';
+      this.audio = null;
     }
+
+    const song = this.songs[this.currentSongIndex];
+    this.audio = new Audio(song.src);
+    this.audio.volume = 0.35;
+    this.audio.preload = 'auto';
+
+    this.audio.addEventListener('timeupdate', () => {
+      if (this.audio && this.audio.currentTime >= 50) {
+        this.playNextSong();
+      }
+    });
+
+    this.audio.addEventListener('ended', () => {
+      this.playNextSong();
+    });
 
     const tryPlay = () => {
       if (this.currentUser && this.audio && !this.isPlaying) {
         this.audio.play()
           .then(() => {
             this.isPlaying = true;
+            this.toastService.info(`🎵 Now Playing: ${song.name}`);
             removeListeners();
           })
           .catch(e => console.log("Play failed on interaction:", e));
@@ -97,6 +122,7 @@ export class AppComponent {
     this.audio.play()
       .then(() => {
         this.isPlaying = true;
+        this.toastService.info(`🎵 Now Playing: ${song.name}`);
       })
       .catch(err => {
         console.log("Autoplay blocked, waiting for user gesture:", err);
@@ -111,8 +137,25 @@ export class AppComponent {
       });
   }
 
+  playNextSong() {
+    let newIndex = this.currentSongIndex;
+    if (this.songs.length > 1) {
+      while (newIndex === this.currentSongIndex) {
+        newIndex = Math.floor(Math.random() * this.songs.length);
+      }
+    } else {
+      newIndex = 0;
+    }
+    this.currentSongIndex = newIndex;
+    this.isPlaying = false;
+    this.playCurrentSong();
+  }
+
   toggleAudio() {
-    if (!this.audio) return;
+    if (!this.audio) {
+      this.playCurrentSong();
+      return;
+    }
     if (this.isPlaying) {
       this.audio.pause();
       this.isPlaying = false;
