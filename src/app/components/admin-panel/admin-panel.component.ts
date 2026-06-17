@@ -155,7 +155,7 @@ export class AdminPanelComponent implements OnInit {
 
   getUserPredictionScore(matchId: string, userId: string) {
     const pred = this.allPredictions.find(p => p.matchId === matchId && p.userId === userId);
-    return pred ? { scoreA: pred.predictedScoreA, scoreB: pred.predictedScoreB } : null;
+    return pred ? { scoreA: pred.predictedScoreA, scoreB: pred.predictedScoreB, updatedAt: pred.updatedAt } : null;
   }
 
   getPredictionStatus(matchId: string) {

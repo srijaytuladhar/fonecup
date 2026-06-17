@@ -43,6 +43,7 @@ export interface Prediction {
   predictedScoreA: number;
   predictedScoreB: number;
   pointsEarned: number;
+  updatedAt?: string;
 }
 
 export interface PoolRules {
@@ -352,7 +353,8 @@ export class PredictionService {
       matchId,
       predictedScoreA: scoreA,
       predictedScoreB: scoreB,
-      pointsEarned: existing ? existing.pointsEarned : 0
+      pointsEarned: existing ? existing.pointsEarned : 0,
+      updatedAt: new Date().toISOString()
     };
     await setDoc(doc(this.db, 'predictions', id), newPrediction);
   }
@@ -368,7 +370,8 @@ export class PredictionService {
       matchId,
       predictedScoreA: scoreA,
       predictedScoreB: scoreB,
-      pointsEarned: existing ? existing.pointsEarned : 0
+      pointsEarned: existing ? existing.pointsEarned : 0,
+      updatedAt: new Date().toISOString()
     };
     await setDoc(doc(this.db, 'predictions', id), newPrediction);
     await this.recalculateAllPoints();
