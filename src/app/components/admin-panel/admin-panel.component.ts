@@ -107,6 +107,31 @@ export class AdminPanelComponent implements OnInit {
     }
   }
 
+  async deleteUser(userId: string) {
+    if (userId === this.authService.getCurrentUser()?.id) {
+      this.toastService.error('You cannot delete your own admin account.');
+      return;
+    }
+    if (confirm('Are you sure you want to delete this user? All their predictions will also be deleted.')) {
+      try {
+        await this.authService.deleteUser(userId);
+        this.toastService.success('User deleted successfully!');
+        this.loadUsers();
+      } catch (err: any) {
+        this.toastService.error('Error deleting user: ' + err.message);
+      }
+    }
+  }
+
+  async adjustPrediction(userId: string, matchId: string, scoreA: number, scoreB: number) {
+    try {
+      await this.predictionService.adminAdjustPrediction(userId, matchId, scoreA, scoreB);
+      this.toastService.success('Prediction adjusted successfully!');
+    } catch (err: any) {
+      this.toastService.error('Error adjusting prediction: ' + err.message);
+    }
+  }
+
   async addEmployee() {
     if (this.newEmployeeName.trim()) {
       await this.predictionService.addUser(this.newEmployeeName.trim());
@@ -117,7 +142,7 @@ export class AdminPanelComponent implements OnInit {
   }
 
   getParticipantsCount(): number {
-    return this.users.filter(u => !u.isAdmin).length;
+    return this.users.length;
   }
 
   getPredictionCount(matchId: string): number {
@@ -136,7 +161,7 @@ export class AdminPanelComponent implements OnInit {
   getPredictionStatus(matchId: string) {
     const predicted: AuthUser[] = [];
     const notPredicted: AuthUser[] = [];
-    const participants = this.users.filter(u => !u.isAdmin);
+    const participants = this.users;
     participants.forEach(user => {
       const hasPred = this.allPredictions.some(p => p.matchId === matchId && p.userId === user.id);
       if (hasPred) {

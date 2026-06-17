@@ -357,6 +357,23 @@ export class PredictionService {
     await setDoc(doc(this.db, 'predictions', id), newPrediction);
   }
 
+  async adminAdjustPrediction(userId: string, matchId: string, scoreA: number, scoreB: number) {
+    const predictions = this.getPredictions();
+    const existing = predictions.find(p => p.userId === userId && p.matchId === matchId);
+    const id = existing ? existing.id : 'p' + Date.now();
+
+    const newPrediction: Prediction = {
+      id,
+      userId,
+      matchId,
+      predictedScoreA: scoreA,
+      predictedScoreB: scoreB,
+      pointsEarned: existing ? existing.pointsEarned : 0
+    };
+    await setDoc(doc(this.db, 'predictions', id), newPrediction);
+    await this.recalculateAllPoints();
+  }
+
   async toggleMatchBlock(matchId: string, isBlocked: boolean) {
     const matchRef = doc(this.db, 'matches', matchId);
     await updateDoc(matchRef, { isBlocked });
