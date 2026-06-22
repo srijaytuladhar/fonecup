@@ -419,6 +419,15 @@ export class PredictionService {
     return Math.max(0, remaining);
   }
 
+  getCompletedMatchesCount(): number {
+    return this.getMatches().filter(m => m.status === 'completed').length;
+  }
+
+  getCompletedPool(): number {
+    const E = this.getUsers().length;
+    return this.getCompletedMatchesCount() * 30 * E;
+  }
+
   private async recalculateAllPoints() {
     const matches = this.getMatches().filter(m => m.status === 'completed');
     const predictions = [...this.getPredictions()];

@@ -19,18 +19,18 @@ export class MatchCenterComponent implements OnInit {
   predictions: Prediction[] = [];
   filter: 'all' | 'scheduled' | 'completed' = 'scheduled';
   selectedGroup: string = 'all';
-  
+
   selectedUserId: string = '';
   currentUserName: string = '';
   tempPredictions: { [matchId: string]: { scoreA: number, scoreB: number } } = {};
   saveFeedback: { [matchId: string]: boolean } = {};
 
   constructor(
-    private predictionService: PredictionService, 
-    private authService: AuthenticationService, 
+    private predictionService: PredictionService,
+    private authService: AuthenticationService,
     private router: Router,
     private toastService: ToastService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.predictionService.matches$.subscribe(m => this.matches = m);
@@ -58,6 +58,18 @@ export class MatchCenterComponent implements OnInit {
     return Array.from(new Set(allGroups)).sort();
   }
 
+  get completedMatchesCount(): number {
+    return this.matches.filter(m => m.status === 'completed').length;
+  }
+
+  get scheduledMatchesCount(): number {
+    return this.matches.filter(m => m.status === 'scheduled').length;
+  }
+
+  get allMatchesCount(): number {
+    return this.matches.length;
+  }
+
   get filteredMatches() {
     let filtered = this.matches;
     if (this.filter !== 'all') {
@@ -65,6 +77,9 @@ export class MatchCenterComponent implements OnInit {
     }
     if (this.selectedGroup !== 'all') {
       filtered = filtered.filter(m => m.groupName === this.selectedGroup);
+    }
+    if (this.filter === 'completed') {
+      return [...filtered].sort((a, b) => new Date(b.matchDate).getTime() - new Date(a.matchDate).getTime());
     }
     return filtered;
   }
@@ -76,7 +91,7 @@ export class MatchCenterComponent implements OnInit {
   loadUserPredictions() {
     this.tempPredictions = {};
     if (!this.selectedUserId) return;
-    
+
     const userPreds = this.predictions.filter(p => p.userId === this.selectedUserId);
     this.matches.filter(m => m.status === 'scheduled').forEach(m => {
       const existing = userPreds.find(p => p.matchId === m.id);
@@ -117,7 +132,7 @@ export class MatchCenterComponent implements OnInit {
     this.tempPredictions[matchId].scoreA = 0;
     this.tempPredictions[matchId].scoreB = 0;
     await this.saveAutoPrediction(matchId);
-    
+
     // Show visual indicator feedback for 1.5 seconds
     this.saveFeedback[matchId] = true;
     setTimeout(() => {
@@ -143,7 +158,7 @@ export class MatchCenterComponent implements OnInit {
     const tomorrow = new Date();
     tomorrow.setDate(today.getDate() + 1);
 
-    const isSameDay = (d1: Date, d2: Date) => 
+    const isSameDay = (d1: Date, d2: Date) =>
       d1.getFullYear() === d2.getFullYear() &&
       d1.getMonth() === d2.getMonth() &&
       d1.getDate() === d2.getDate();

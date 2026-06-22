@@ -13,8 +13,10 @@ import { FormsModule } from '@angular/forms';
 export class LeaderboardComponent implements OnInit {
   employees: Employee[] = [];
   remainingPool = 0;
+  completedPool = 0;
+  completedMatchesCount = 0;
 
-  constructor(private predictionService: PredictionService) {}
+  constructor(private predictionService: PredictionService) { }
 
   ngOnInit() {
     this.predictionService.users$.subscribe(users => {
@@ -28,6 +30,8 @@ export class LeaderboardComponent implements OnInit {
 
   updateRemainingPool() {
     this.remainingPool = this.predictionService.getRemainingPool();
+    this.completedPool = this.predictionService.getCompletedPool();
+    this.completedMatchesCount = this.predictionService.getCompletedMatchesCount();
   }
 
   getFlag(teamName: string): string {
