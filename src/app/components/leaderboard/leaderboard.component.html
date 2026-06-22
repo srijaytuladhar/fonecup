@@ -3,43 +3,72 @@
   <div class="rule-badge">NPR 30 per employee/match split (50% outcome, 50% exact score)</div>
 </div>
 
-<div class="gold-pot-container glass-card">
-  <div class="gold-pot-content">
-    <div class="treasure-animation-container">
-      <div class="treasure-chest">
-        <div class="chest-lid">
-          <div class="lid-trim lid-trim-left"></div>
-          <div class="lid-trim lid-trim-right"></div>
-        </div>
-        <div class="chest-body">
-          <div class="body-trim body-trim-left"></div>
-          <div class="body-trim body-trim-right"></div>
-          <div class="chest-lock">
-            <div class="lock-keyhole"></div>
-          </div>
-        </div>
-      </div>
-      <!-- Animated falling coins -->
-      <div class="coin coin-1"></div>
-      <div class="coin coin-2"></div>
-      <div class="coin coin-3"></div>
-      <div class="coin coin-4"></div>
-      <div class="coin coin-5"></div>
-      <div class="coin coin-6"></div>
+<div class="premium-pool-dashboard glass-card">
+  <!-- Glowing background circles -->
+  <div class="glow-bg-circle primary-glow"></div>
+  <div class="glow-bg-circle success-glow"></div>
+  
+  <div class="dashboard-header">
+    <div class="header-main-title">
+      <span class="icon-sparkle">🏆</span>
+      <h3>World Cup Prize Pool Status</h3>
     </div>
-    <div class="gold-pot-info" style="width: 100%;">
-      <h3>Treasure Pool</h3>
-      <div style="display: flex; gap: 32px; align-items: center; flex-wrap: wrap; margin-top: 4px; margin-bottom: 4px;">
-        <div>
-          <span style="font-size: 0.8rem; color: var(--text-secondary); display: block;">Remaining Pool</span>
-          <span class="gold-pot-amount" style="font-size: 1.8rem; display: block; margin-top: 2px;">Rs. {{ remainingPool }}</span>
-        </div>
-        <div style="border-left: 1px solid rgba(255,255,255,0.15); padding-left: 32px;">
-          <span style="font-size: 0.8rem; color: #10b981; display: block; font-weight: 600;">Completed Match Bank ({{ completedMatchesCount }} completed)</span>
-          <span class="gold-pot-amount" style="font-size: 1.8rem; color: #10b981; display: block; margin-top: 2px; text-shadow: 0 2px 10px rgba(16, 185, 129, 0.25);">Rs. {{ completedPool }}</span>
-        </div>
+    <div class="pool-progress-summary">
+      <span class="progress-percentage" *ngIf="employees.length > 0">{{ ((completedPool / (30 * 104 * employees.length)) * 100).toFixed(1) }}% Unlocked</span>
+    </div>
+  </div>
+
+  <!-- Middle Showcase Section with the elegant gold chest image -->
+  <div class="center-treasure-showcase">
+    <div class="glowing-halo"></div>
+    <div class="treasure-image-wrap">
+      <img src="/treasure.gif" alt="Grand Treasure Chest" class="elegant-chest-img" />
+    </div>
+    <div class="floating-coin fc-1">🪙</div>
+    <div class="floating-coin fc-2">✨</div>
+    <div class="floating-coin fc-3">💎</div>
+    <div class="floating-coin fc-4">🪙</div>
+    <div class="floating-coin fc-5">✨</div>
+  </div>
+
+  <div class="premium-metrics-grid">
+    <!-- Remaining Pool Card -->
+    <div class="metric-card remaining-card">
+      <div class="card-glow-line"></div>
+      <div class="metric-icon-wrap">
+        <span class="metric-icon">🪙</span>
       </div>
-      <p class="gold-pot-desc">Total initial pool: Rs. {{ 30 * 104 * employees.length }}</p>
+      <div class="metric-info">
+        <span class="metric-label">Remaining Pool</span>
+        <span class="metric-value">Rs. {{ remainingPool }}</span>
+        <span class="metric-subtext">Available for future matches</span>
+      </div>
+    </div>
+
+    <!-- Completed Match Bank Card -->
+    <div class="metric-card completed-card">
+      <div class="card-glow-line-green"></div>
+      <div class="metric-icon-wrap-green">
+        <span class="metric-icon">💰</span>
+      </div>
+      <div class="metric-info">
+        <span class="metric-label">Completed Match Bank</span>
+        <span class="metric-value text-success">Rs. {{ completedPool }}</span>
+        <span class="metric-subtext">{{ completedMatchesCount }} matches settled & paid out</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Info Footer -->
+  <div class="dashboard-footer-stats">
+    <div class="footer-stat-item">
+      <span class="stat-label">Total Initial Pool:</span>
+      <span class="stat-value" *ngIf="employees.length > 0">Rs. {{ 30 * 104 * employees.length }}</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="footer-stat-item">
+      <span class="stat-label">Total Participants:</span>
+      <span class="stat-value">{{ employees.length }} Players</span>
     </div>
   </div>
 </div>
