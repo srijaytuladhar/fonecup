@@ -41,8 +41,9 @@ export class AppComponent {
     { name: "Wavin' Flag", src: 'https://archive.org/download/2010-various-artists-the-dome-summer-2010/03.%20K%27naan%20-%20Wavin%27%20flag.mp3' },
     { name: "The Cup of Life", src: '/Ricky%20Martin%20-%20The%20Cup%20of%20Life.mp3' },
     { name: "Waka Waka", src: 'https://archive.org/download/waka-waka/Waka%20Waka.mp3' },
-    { name: "Dai Dai", src: 'https://archive.org/download/2010-various-artists-the-dome-summer-2010/05.%20Velile%20%26%20Safri%20Duo%20-%20Helele.mp3' },
-    { name: "We Are the Champions", src: '/queen-we-are-the-champions-lyrics_NRwtZcI6.mp3' }
+    { name: "Khoi kun geet ho yo?", src: 'https://archive.org/download/2010-various-artists-the-dome-summer-2010/05.%20Velile%20%26%20Safri%20Duo%20-%20Helele.mp3' },
+    { name: "We Are the Champions", src: '/queen-we-are-the-champions-lyrics_NRwtZcI6.mp3' },
+    { name: "Dai Dai", src: '/dai-dai.mp3' }
   ];
   currentSongIndex = 0;
 
