@@ -31,6 +31,20 @@
     <div class="floating-coin fc-5">✨</div>
   </div>
 
+  <!-- Progress Bar Section -->
+  <div class="pool-progress-container" *ngIf="employees.length > 0">
+    <div class="pool-progress-bar-wrap">
+      <div class="pool-progress-bar-fill" [style.width.%]="(completedPool / (30 * 104 * employees.length)) * 100">
+        <span class="progress-glow"></span>
+      </div>
+    </div>
+    <div class="progress-bar-labels">
+      <span class="completed-label">Rs. {{ completedPool }} Claimed</span>
+      <span class="progress-percentage-center">{{ ((completedPool / (30 * 104 * employees.length)) * 100).toFixed(1) }}% Unlocked</span>
+      <span class="remaining-label">Rs. {{ remainingPool }} Remaining</span>
+    </div>
+  </div>
+
   <div class="premium-metrics-grid">
     <!-- Remaining Pool Card -->
     <div class="metric-card remaining-card">

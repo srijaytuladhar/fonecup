@@ -440,10 +440,8 @@ export class PredictionService {
   }
 
   getCompletedPool(): number {
-    const E = this.getUsers().length;
-    const totalInitialPool = 30 * 104 * E;
     const totalEarningsSum = this.getUsers().reduce((sum, u) => sum + (u.totalEarnings || 0), 0);
-    return Number((totalInitialPool - totalEarningsSum).toFixed(2));
+    return Number(totalEarningsSum.toFixed(2));
   }
 
   private async recalculateAllPoints() {
