@@ -117,11 +117,12 @@ export class AppComponent implements OnInit, OnDestroy {
           clearInterval(this.countdownInterval);
         }
       } else {
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        const pad = (num: number) => String(num).padStart(2, '0');
+        const hours = pad(Math.floor(diff / (1000 * 60 * 60)));
+        const minutes = pad(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)));
+        const seconds = pad(Math.floor((diff % (1000 * 60)) / 1000));
         
-        this.countdownText = `${hours}h ${minutes}m ${seconds}s`;
+        this.countdownText = `${hours} : ${minutes} : ${seconds}`;
         this.isTimeUp = false;
       }
     };

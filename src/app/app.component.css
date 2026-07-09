@@ -128,17 +128,17 @@
 .champion-pick-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: rgba(251, 191, 36, 0.15);
   border: 1px solid rgba(251, 191, 36, 0.4);
   color: #fbbf24;
-  padding: 8px 16px;
-  font-size: 0.9rem;
+  padding: 5px 12px;
+  font-size: 0.78rem;
   font-weight: 600;
-  border-radius: 20px;
+  border-radius: 16px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.1);
+  box-shadow: 0 3px 8px rgba(251, 191, 36, 0.08);
 }
 
 .champion-pick-btn:hover {
@@ -166,36 +166,40 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .champion-countdown {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 0.72rem;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.95rem;
   color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  padding: 2px 8px;
-  border-radius: 8px;
-  font-weight: 700;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  padding: 4px 14px;
+  border-radius: 10px;
+  font-weight: 800;
   font-family: 'Outfit', monospace;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  font-variant-numeric: tabular-nums;
+  min-width: 120px;
 }
 
 .champion-countdown:not(.closed) {
   color: #fbbf24;
-  background: rgba(251, 191, 36, 0.1);
-  border-color: rgba(251, 191, 36, 0.25);
-  text-shadow: 0 0 6px rgba(251, 191, 36, 0.2);
+  background: rgba(251, 191, 36, 0.12);
+  border-color: rgba(251, 191, 36, 0.3);
+  text-shadow: 0 0 8px rgba(251, 191, 36, 0.35);
 }
 
 .champion-countdown.closed {
   color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.25);
 }
 
 .champion-pick-btn:disabled {

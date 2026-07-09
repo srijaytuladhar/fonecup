@@ -430,10 +430,9 @@ export class PredictionService {
 
   getRemainingPool(): number {
     const E = this.getUsers().length;
-    const completedMatchesCount = this.getMatches().filter(m => m.status === 'completed').length;
-    const initialPool = 30 * 104 * E;
-    const remaining = initialPool - (completedMatchesCount * 30 * E);
-    return Math.max(0, remaining);
+    const totalInitialPool = 30 * 104 * E;
+    const completedPool = this.getCompletedPool();
+    return Number((totalInitialPool - completedPool).toFixed(2));
   }
 
   getCompletedMatchesCount(): number {
@@ -442,7 +441,9 @@ export class PredictionService {
 
   getCompletedPool(): number {
     const E = this.getUsers().length;
-    return this.getCompletedMatchesCount() * 30 * E;
+    const totalInitialPool = 30 * 104 * E;
+    const totalEarningsSum = this.getUsers().reduce((sum, u) => sum + (u.totalEarnings || 0), 0);
+    return Number((totalInitialPool - totalEarningsSum).toFixed(2));
   }
 
   private async recalculateAllPoints() {
