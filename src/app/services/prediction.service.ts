@@ -67,17 +67,30 @@ export class PredictionService {
     correctOutcomePoints: 1,
     amountPerPoint: 2
   });
+  private settingsSubject = new BehaviorSubject<{ championSelectEnabled: boolean }>({ championSelectEnabled: true });
 
   users$ = this.usersSubject.asObservable();
   matches$ = this.matchesSubject.asObservable();
   predictions$ = this.predictionsSubject.asObservable();
   rules$ = this.rulesSubject.asObservable();
+  settings$ = this.settingsSubject.asObservable();
 
   constructor() {
     this.loadInitialData();
   }
 
   private loadInitialData() {
+    onSnapshot(doc(this.db, 'settings', 'system'), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        this.settingsSubject.next({
+          championSelectEnabled: data['championSelectEnabled'] !== false
+        });
+      } else {
+        this.settingsSubject.next({ championSelectEnabled: true });
+      }
+    });
+
     onSnapshot(collection(this.db, 'users'), (snapshot) => {
       const users: Employee[] = [];
       snapshot.forEach((docSnap) => {
@@ -380,6 +393,10 @@ export class PredictionService {
   async toggleMatchBlock(matchId: string, isBlocked: boolean) {
     const matchRef = doc(this.db, 'matches', matchId);
     await updateDoc(matchRef, { isBlocked });
+  }
+
+  async toggleChampionSelect(enabled: boolean) {
+    await setDoc(doc(this.db, 'settings', 'system'), { championSelectEnabled: enabled }, { merge: true });
   }
 
   async updateMatchDate(matchId: string, matchDate: string) {

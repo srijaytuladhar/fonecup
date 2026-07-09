@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthenticationService } from './services/authentication.service';
 import { PredictionService } from './services/prediction.service';
 import { ToastService } from './services/toast.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -12,10 +13,18 @@ import { ToastService } from './services/toast.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'fonepay-worldcup';
   currentUrl = '';
   currentUser: any = null;
+
+  championSelectEnabled = true;
+  countdownText = '';
+  isTimeUp = false;
+  private countdownInterval: any;
+  private settingsSub?: Subscription;
+  private routerSub?: Subscription;
+  private userSub?: Subscription;
 
   isChampionModalOpen = false;
   selectedChampion = '';
@@ -53,14 +62,14 @@ export class AppComponent {
     private predictionService: PredictionService,
     public toastService: ToastService
   ) {
-    this.router.events.subscribe(event => {
+    this.routerSub = this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.currentUrl = event.urlAfterRedirects;
       }
     });
 
     let previousUser: any = null;
-    this.authService.currentUser$.subscribe(user => {
+    this.userSub = this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
       if (user && !previousUser) {
         this.currentSongIndex = Math.floor(Math.random() * this.songs.length);
@@ -71,6 +80,54 @@ export class AppComponent {
       }
       previousUser = user;
     });
+
+    this.settingsSub = this.predictionService.settings$.subscribe(settings => {
+      this.championSelectEnabled = settings.championSelectEnabled;
+    });
+  }
+
+  ngOnInit() {
+    this.startCountdown();
+  }
+
+  ngOnDestroy() {
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
+    this.settingsSub?.unsubscribe();
+    this.routerSub?.unsubscribe();
+    this.userSub?.unsubscribe();
+  }
+
+  isChampionSelectDisabled(): boolean {
+    return !this.championSelectEnabled || this.isTimeUp;
+  }
+
+  startCountdown() {
+    const targetTime = new Date('2026-07-10T01:45:00+05:45').getTime();
+    
+    const update = () => {
+      const now = new Date().getTime();
+      const diff = targetTime - now;
+      
+      if (diff <= 0) {
+        this.countdownText = 'Closed';
+        this.isTimeUp = true;
+        if (this.countdownInterval) {
+          clearInterval(this.countdownInterval);
+        }
+      } else {
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        this.countdownText = `${hours}h ${minutes}m ${seconds}s`;
+        this.isTimeUp = false;
+      }
+    };
+    
+    update();
+    this.countdownInterval = setInterval(update, 1000);
   }
 
   playCurrentSong() {
@@ -184,6 +241,10 @@ export class AppComponent {
   }
 
   openChampionModal() {
+    if (this.isChampionSelectDisabled()) {
+      this.toastService.error('Champion prediction is currently disabled or closed.');
+      return;
+    }
     this.selectedChampion = this.currentUser?.championPrediction || '';
     this.isChampionModalOpen = true;
   }
@@ -197,6 +258,10 @@ export class AppComponent {
   }
 
   async saveChampionSelection() {
+    if (this.isChampionSelectDisabled()) {
+      this.toastService.error('Champion prediction is closed.');
+      return;
+    }
     if (!this.selectedChampion) {
       this.toastService.error('Please select a country!');
       return;

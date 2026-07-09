@@ -15,11 +15,17 @@
     <div class="header-actions">
       <span class="user-greeting" *ngIf="currentUser">Hello, {{ currentUser.name }}</span>
       
-      <button *ngIf="currentUser" (click)="openChampionModal()" class="champion-pick-btn" [class.no-pick]="!currentUser?.championPrediction">
-        <span class="trophy-emoji">🏆</span>
-        <img *ngIf="currentUser?.championPrediction" [src]="getFlag(currentUser.championPrediction)" class="nav-flag-icon" />
-        <span class="btn-text">{{ currentUser?.championPrediction ? currentUser.championPrediction : 'Predict Champion' }}</span>
-      </button>
+      <div *ngIf="currentUser" class="champion-pick-container">
+        <button (click)="openChampionModal()" class="champion-pick-btn" [class.no-pick]="!currentUser?.championPrediction" [disabled]="isChampionSelectDisabled()">
+          <span class="trophy-emoji">🏆</span>
+          <img *ngIf="currentUser?.championPrediction" [src]="getFlag(currentUser.championPrediction)" class="nav-flag-icon" />
+          <span class="btn-text">{{ currentUser?.championPrediction ? currentUser.championPrediction : 'Predict Champion' }}</span>
+        </button>
+        <span class="champion-countdown" [class.closed]="isChampionSelectDisabled()">
+          <span class="timer-icon">⏳</span>
+          <span class="timer-text">{{ countdownText }}</span>
+        </span>
+      </div>
 
       <button *ngIf="currentUser" (click)="toggleAudio()" class="audio-control-btn" [class.playing]="isPlaying" [title]="isPlaying ? 'Pause: ' + songs[currentSongIndex].name : 'Play: ' + songs[currentSongIndex].name">
         <span class="audio-wave" *ngIf="isPlaying">

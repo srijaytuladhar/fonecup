@@ -162,6 +162,52 @@
   box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25);
 }
 
+.champion-pick-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.champion-countdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-family: 'Outfit', monospace;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.champion-countdown:not(.closed) {
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.1);
+  border-color: rgba(251, 191, 36, 0.25);
+  text-shadow: 0 0 6px rgba(251, 191, 36, 0.2);
+}
+
+.champion-countdown.closed {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.champion-pick-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  box-shadow: none;
+  pointer-events: none;
+}
+
 @keyframes glowPulse {
   0%, 100% {
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1), 0 0 0 0px rgba(59, 130, 246, 0.2);
@@ -477,6 +523,20 @@
     width: 38px;
     height: 38px;
     justify-content: center;
+  }
+  
+  .champion-pick-container {
+    position: relative;
+  }
+
+  .champion-countdown {
+    position: absolute;
+    bottom: -22px;
+    font-size: 0.6rem;
+    padding: 1px 4px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 100;
   }
   
   .champion-pick-btn .btn-text, .audio-control-btn .btn-text {

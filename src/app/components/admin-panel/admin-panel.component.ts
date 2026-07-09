@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PredictionService, Match, Prediction } from '../../services/prediction.service';
 import { AuthenticationService, AuthUser } from '../../services/authentication.service';
 import { ToastService } from '../../services/toast.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-admin-panel',
@@ -12,7 +13,9 @@ import { ToastService } from '../../services/toast.service';
   templateUrl: './admin-panel.component.html',
   styleUrl: './admin-panel.component.css'
 })
-export class AdminPanelComponent implements OnInit {
+export class AdminPanelComponent implements OnInit, OnDestroy {
+  championSelectEnabled: boolean = true;
+  private settingsSub?: Subscription;
   users: AuthUser[] = [];
   newEmployeeName: string = '';
   newMatchTeamA: string = '';
@@ -52,7 +55,24 @@ export class AdminPanelComponent implements OnInit {
     this.predictionService.predictions$.subscribe(preds => {
       this.allPredictions = preds;
     });
+    this.settingsSub = this.predictionService.settings$.subscribe(settings => {
+      this.championSelectEnabled = settings.championSelectEnabled;
+    });
     this.loadUsers();
+  }
+
+  ngOnDestroy() {
+    this.settingsSub?.unsubscribe();
+  }
+
+  async toggleChampionSelect() {
+    try {
+      const nextStatus = !this.championSelectEnabled;
+      await this.predictionService.toggleChampionSelect(nextStatus);
+      this.toastService.success(`Champion prediction selection ${nextStatus ? 'enabled' : 'disabled'} successfully!`);
+    } catch (err: any) {
+      this.toastService.error('Error toggling champion prediction: ' + err.message);
+    }
   }
 
   loadUsers() {

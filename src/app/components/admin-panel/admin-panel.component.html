@@ -2,6 +2,25 @@
   <h2>Admin Control Panel</h2>
 </div>
 
+<!-- Champion Prediction Settings Card -->
+<div class="glass-card mb-4" style="margin-bottom: 24px; padding: 24px; border-radius: 20px; background: rgba(15, 23, 42, 0.4); border: 1px solid var(--glass-border);">
+  <h3 style="border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; margin-bottom: 12px; font-size: 1.2rem; color: #fbbf24;">🏆 Champion Prediction Settings</h3>
+  <p class="section-desc" style="margin-bottom: 16px; font-size: 0.9rem; color: var(--text-secondary);">Toggle to enable or disable the champion prediction selection in the navbar for all users. Changes reflect in real-time.</p>
+  <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+    <button 
+      (click)="toggleChampionSelect()" 
+      class="btn block-toggle-btn"
+      [class.blocked]="!championSelectEnabled"
+      style="min-width: 140px; margin-top: 0; padding: 8px 16px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;"
+    >
+      {{ championSelectEnabled ? '🔓 Enabled' : '🔒 Disabled' }}
+    </button>
+    <span style="font-size: 0.95rem; color: var(--text-primary); font-weight: 500;">
+      Currently: <strong [style.color]="championSelectEnabled ? '#34d399' : '#f87171'">{{ championSelectEnabled ? 'ENABLED (Users can select/edit prediction)' : 'DISABLED (Prediction is closed/blocked)' }}</strong>
+    </span>
+  </div>
+</div>
+
 <div class="admin-grid">
   <div class="glass-card admin-section">
     <h3>Add Employee</h3>
