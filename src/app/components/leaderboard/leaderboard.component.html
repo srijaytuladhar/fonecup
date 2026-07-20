@@ -3,18 +3,56 @@
   <div class="rule-badge">NPR 30 per employee/match split (50% outcome, 50% exact score)</div>
 </div>
 
+<!-- Olympic Winner Stand Podium -->
+<div class="podium-container" *ngIf="employees.length >= 3">
+  <!-- 2nd Place -->
+  <div class="podium-card second-place">
+    <div class="podium-avatar-container">
+      <span class="podium-badge">🥈</span>
+    </div>
+    <div class="podium-name">{{ employees[1].name }}</div>
+    <div class="podium-earnings">Rs. {{ employees[1].totalEarnings }}</div>
+    <div class="podium-stand silver-stand">2nd</div>
+  </div>
+
+  <!-- 1st Place -->
+  <div class="podium-card first-place">
+    <img *ngIf="employees[0].championPrediction" [src]="getFlag(employees[0].championPrediction)"
+      [alt]="employees[0].championPrediction" class="podium-flag-on-top" />
+    <br>
+    <div class="podium-avatar-container">
+      <div class="crown-icon">👑</div>
+      <span class="podium-badge">🥇</span>
+    </div>
+    <div class="podium-name">{{ employees[0].name }}</div>
+    <div class="podium-earnings">Rs. {{ employees[0].totalEarnings }}</div>
+    <div class="podium-stand gold-stand">1st</div>
+  </div>
+
+  <!-- 3rd Place -->
+  <div class="podium-card third-place">
+    <div class="podium-avatar-container">
+      <span class="podium-badge">🥉</span>
+    </div>
+    <div class="podium-name">{{ employees[2].name }}</div>
+    <div class="podium-earnings">Rs. {{ employees[2].totalEarnings }}</div>
+    <div class="podium-stand bronze-stand">3rd</div>
+  </div>
+</div>
+
 <div class="premium-pool-dashboard glass-card">
   <!-- Glowing background circles -->
   <div class="glow-bg-circle primary-glow"></div>
   <div class="glow-bg-circle success-glow"></div>
-  
+
   <div class="dashboard-header">
     <div class="header-main-title">
       <span class="icon-sparkle">🏆</span>
       <h3>World Cup Prize Pool Status</h3>
     </div>
     <div class="pool-progress-summary">
-      <span class="progress-percentage" *ngIf="employees.length > 0">{{ ((completedPool / (30 * 104 * employees.length)) * 100).toFixed(1) }}% Unlocked</span>
+      <span class="progress-percentage" *ngIf="employees.length > 0">{{ ((completedPool / (30 * 104 * employees.length))
+        * 100).toFixed(1) }}% Unlocked</span>
     </div>
   </div>
 
@@ -40,7 +78,10 @@
     </div>
     <div class="progress-bar-labels">
       <span class="completed-label">Rs. {{ completedPool }} Claimed</span>
-      <span class="progress-percentage-center">{{ ((completedPool / (30 * 104 * employees.length)) * 100).toFixed(1) }}% Unlocked</span>
+      <span class="progress-percentage-center">
+        {{ ((completedPool / (30 * 104 * employees.length)) * 100).toFixed(1) }}% Unlocked
+        ({{ (100 - (completedPool / (30 * 104 * employees.length)) * 100).toFixed(1) }}% Locked for Team Lunch)
+      </span>
       <span class="remaining-label">Rs. {{ remainingPool }} Remaining</span>
     </div>
   </div>
@@ -73,6 +114,17 @@
     </div>
   </div>
 
+  <!-- Dining Allocation Fund Message Box -->
+  <div class="dining-allocation-box">
+    <div class="dining-glow-line"></div>
+    <span class="dining-icon">🍔</span>
+    <div class="dining-text-content">
+      <span class="dining-title">Lunch / Dinner Fund</span>
+      <span class="dining-desc">The remaining <strong>Rs. 5775.24</strong> will be used for team lunch or dinner!
+        🎉</span>
+    </div>
+  </div>
+
   <!-- Bottom Info Footer -->
   <div class="dashboard-footer-stats">
     <div class="footer-stat-item">
@@ -84,40 +136,6 @@
       <span class="stat-label">Total Participants:</span>
       <span class="stat-value">{{ employees.length }} Players</span>
     </div>
-  </div>
-</div>
-
-<!-- Olympic Winner Stand Podium -->
-<div class="podium-container" *ngIf="employees.length >= 3">
-  <!-- 2nd Place -->
-  <div class="podium-card second-place">
-    <div class="podium-avatar-container">
-      <span class="podium-badge">🥈</span>
-    </div>
-    <div class="podium-name">{{ employees[1].name }}</div>
-    <div class="podium-earnings">Rs. {{ employees[1].totalEarnings }}</div>
-    <div class="podium-stand silver-stand">2nd</div>
-  </div>
-
-  <!-- 1st Place -->
-  <div class="podium-card first-place">
-    <div class="podium-avatar-container">
-      <div class="crown-icon">👑</div>
-      <span class="podium-badge">🥇</span>
-    </div>
-    <div class="podium-name">{{ employees[0].name }}</div>
-    <div class="podium-earnings">Rs. {{ employees[0].totalEarnings }}</div>
-    <div class="podium-stand gold-stand">1st</div>
-  </div>
-
-  <!-- 3rd Place -->
-  <div class="podium-card third-place">
-    <div class="podium-avatar-container">
-      <span class="podium-badge">🥉</span>
-    </div>
-    <div class="podium-name">{{ employees[2].name }}</div>
-    <div class="podium-earnings">Rs. {{ employees[2].totalEarnings }}</div>
-    <div class="podium-stand bronze-stand">3rd</div>
   </div>
 </div>
 

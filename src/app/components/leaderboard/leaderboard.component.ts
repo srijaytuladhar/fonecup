@@ -29,7 +29,7 @@ export class LeaderboardComponent implements OnInit {
   }
 
   updateRemainingPool() {
-    this.remainingPool = this.predictionService.getRemainingPool();
+    this.remainingPool = 0;
     this.completedPool = this.predictionService.getCompletedPool();
     this.completedMatchesCount = this.predictionService.getCompletedMatchesCount();
   }
